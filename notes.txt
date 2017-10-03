@@ -1,0 +1,21 @@
+---done 1. Combat system %%%random
+---done 4. every round: first stuff ->>>>> than w,a,s,d -> new round
+---done5. almanach strength  - more dmg..
+---done6. city two find and bring quests in the city
+---done8. city quest kill bandits
+---done 9.  -> savegame
+---done city 1 x weapon merchant
+---done city 1 x misc merchant
+---done 12. display eq -> always
+---done13. Write tutorial
+-- done14. Remove capacity or not??????
+
+---done15. the rest of talks
+---done16. quest giant
+---done17. possiblity to end game + load when dead
+---done18. change map display
+19. Key open gate + fight + end
+---done20. Print items in columns
+---done21. map legend
+22. Sleep in the beginning
+23, Display multiple items on the ground
