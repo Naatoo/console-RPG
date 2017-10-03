@@ -853,8 +853,6 @@ class GameMain:
 
         player_as = round((1 / player_as) * 1000)
         enemy_as = round((1 / enemy_as) * 1000)
-        print("AAAAAA ", player_as)
-        print("BBBBBBb", enemy_as)
         player_time_begin = time()
         enemy_time_begin = time()
         print("+" * 50)
