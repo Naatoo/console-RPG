@@ -317,11 +317,8 @@ class GameMain:
             item_name = input("What do you want to consume? Type the name (type 0 to go back)")
         if item_name == "0":
             return
-        # for i in range(len(possible_to_consume)):
-        #     if number == possible_to_consume[i]:
-        #         this = i
-        # a = int(possible_to_consume[this - 1])
-        # item_name = self.game_now.player.Eq1.elements[a].name
+
+
         for i in range(len(self.game_now.player.Eq1.elements)):
             if item_name in ["Potato", "Bottle of Water"]:
                 if self.game_now.player.Eq1.elements[i].name == item_name:
