@@ -1,9 +1,23 @@
-from Menu import GameMain
+from Game_Engine import GameMain
 from copy import deepcopy
 from time import sleep
 
-game = GameMain()
+# Decide to start tutorial or not
+text = [
+    "-" * 50,
+    "Welcome in Natooland",
+    "Do you want to start a tutorial?",
+    "Type '1' to run tutorial",
+    "Type '2' to run the game without tutorial",
+    "-" * 50,
+    ]
+[print(line) and sleep(1) for line in text]
+user_choice = 0
+while user_choice not in ["1", "2"]:
+    user_choice = input("Type the number: ")
+game = GameMain(user_choice)
 
+# MainMenu/save/load loop
 saves = []
 saves_names = []
 while True:

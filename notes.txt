@@ -20,5 +20,5 @@
 22. Sleep in the beginning
 23, Display multiple items on the ground
 
-24. inn ->add minimum gold player need to have
+---done24. inn ->add minimum gold player need to have
 25. monk -> when takes sword -> it can be deafualt -> make other deafult automatically
