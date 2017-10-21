@@ -3,38 +3,54 @@ from Equipment import Eq
 
 class Enemy:
     def __init__(self, name):
-        # dict = {enemy: [hp, strength, agility, capacity]}
-        enemies = {"Bandit": [500, 8, 10, 1000], "Skeleton": [800, 5, 6, 500], "Rat": [200, 4, 10, 300],
-                   "Giant": [2000, 40, 5, 10000], "Wolf": [300, 5, 8, 1000]}
-        items = {"Bandit": ["Sword", "Reed"], "Skeleton": ["Bone Sword"], "Rat": ["Teeth", "Rat Fur"], "Giant": ["Axe"],
-                 "Wolf": ["Paw", "Potato", "Wolf Fur"]}
+        # dict = {
+        #   enemy: [hp, strength, agility, capacity]
+        #   }
+        enemies = {
+            "Bandit": [500, 8, 10, 1000],
+            "Skeleton": [800, 5, 6, 500],
+            "Rat": [200, 4, 10, 300],
+            "Giant": [2000, 40, 5, 10000],
+            "Wolf": [300, 5, 8, 1000]
+            }
+        items = {
+            "Bandit": ["Sword", "Reed"],
+            "Skeleton": ["Bone Sword"],
+            "Rat": ["Teeth", "Rat Fur"],
+            "Giant": ["Axe"],
+            "Wolf": ["Paw"],
+            "Potato": ["Wolf Fur"]
+            }
         self.name = name
         self.hp = enemies[name][0]
         self.strength = enemies[name][1]
         self.agility = enemies[name][2]
         self.Equipment = Eq(enemies[name][3])
-        for i in range(len(items[name])):
-            self.Equipment.add_element(items[name][i])
+        for item in items[name]:
+            self.Equipment.add_element(item)
 
 
 class NPC:
     def __init__(self, name, x):
         self.name = name
-        items = {"Alchemist": ["Reed", "HP Potion", "Agility Potion", "Strength Potion"],
-                 "Blacksmith": ["Axe", "Silver Claymore"],
-                 "Cartographer": ["Axe", "Map"], "Innkeeper": ["Sword"],
-                 "Merchant": ["Sword", "HP Potion", "Bottle of Water", "Potato", "Reed"], "Guard": ["Axe"],
-                 "Monk": ["Axe"]}
+        items = {
+            "Alchemist": ["Reed", "HP Potion", "Agility Potion", "Strength Potion"],
+            "Blacksmith": ["Axe", "Silver Claymore"],
+            "Cartographer": ["Axe", "Map"],
+            "Innkeeper": ["Sword"],
+            "Merchant": ["Sword", "HP Potion", "Bottle of Water", "Potato", "Reed"],
+            "Guard": ["Axe"],
+            "Monk": ["Axe"]
+            }
         self.gold = 3000
         self.Equipment = Eq(100000)
-        for i in range(len(items[name])):
-            self.Equipment.add_element(items[name][i])
+        for item in items[name]:
+            self.Equipment.add_element(item)
         self.x = x
         self.quest = 0
         dialogues = {
-            "Alchemist":
-            [
-                                   0,
+            "Alchemist": [
+                0,
                                    "Hello, can you help me gathering ingredients for my new mixture?",
                                    "Please bring me 5 portions of Reed.",
                                    "You should look for it nearby the river's source.",

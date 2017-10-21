@@ -36,7 +36,6 @@ class GameMain:
             self.help()
             Tutorial.final_text()
 
-
         # ----------------------------------
         # WITHOUT TUTORIAL
         # ----------------------------------
@@ -293,25 +292,31 @@ class GameMain:
                     break
             self.game_now.now_map.map[self.game_now.now_map.camp_gate] = "O"
 
-
-
     def change_weapon(self):
-        self.game_now.player.Eq1.display_weapons()
-        weapons_list = ["0"]
-        for i in range(len(self.game_now.player.Eq1.elements)):
-            if self.game_now.player.Eq1.elements[i].is_weapon in [1,2]:
-                weapons_list.append(self.game_now.player.Eq1.elements[i].name)
-        weapon_name = 0
-        while weapon_name not in weapons_list:
-            weapon_name = input("Which weapon do you want to use? Type the name: (type 0 to go back)")
-        if weapon_name == "0":
+        self.game_now.player.Eq1.display_weapons(if_change=1)
+        # [[name_of_weapon, name_of_weapon, name_of_weapon],[1,2,3]]
+        weapons_list = [["0"], ["0"]]
+        id = 1
+        for item in self.game_now.player.Eq1.elements:
+            if item.is_weapon in [1, 2]:
+                weapons_list[0].append(item.name)
+                weapons_list[1].append(str(id))
+                id += 1
+        id_choice = 0
+        while id_choice not in weapons_list[1]:
+            id_choice = input("Which weapon do you want to use? Type the number: (type 0 to go back)")
+        if id_choice == "0":
             return
-        for i in range(len(self.game_now.player.Eq1.elements)):
-            if self.game_now.player.Eq1.elements[i].is_weapon == 2:
-                self.game_now.player.Eq1.elements[i].is_weapon = 1
-        for i in range(len(self.game_now.player.Eq1.elements)):
-            if self.game_now.player.Eq1.elements[i].name == weapon_name:
-                self.game_now.player.Eq1.elements[i].is_weapon = 2
+        # change chosen id into weapon's name
+        for i in range(len(weapons_list[1])):
+            if id_choice == weapons_list[1][i]:
+                weapon_name = weapons_list[0][i]
+        # previously used weapon = 1, the one used at the moment = 2
+        for item in self.game_now.player.Eq1.elements:
+            if item.is_weapon == 2:
+                item.is_weapon = 1
+            if item.name == weapon_name:
+                item.is_weapon = 2
                 print("-" * 50)
                 print(weapon_name, "is now being used.")
                 print("-" * 50)
@@ -322,13 +327,12 @@ class GameMain:
         item_name = 0
         self.game_now.player.Eq1.display_items_eat_drink()
         for i in range(len(self.game_now.player.Eq1.elements)):
-            if self.game_now.player.Eq1.elements[i].points != None:
+            if self.game_now.player.Eq1.elements[i].points is not None:
                 possible_to_consume.append(self.game_now.player.Eq1.elements[i].name)
         while item_name not in possible_to_consume:
             item_name = input("What do you want to consume? Type the name (type 0 to go back)")
         if item_name == "0":
             return
-
 
         for i in range(len(self.game_now.player.Eq1.elements)):
             if item_name in ["Potato", "Bottle of Water"]:

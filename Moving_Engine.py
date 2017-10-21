@@ -9,6 +9,13 @@ class Game:
         # GENERATE CHARACTER
         self.player = Player()
         self.player.Eq1.add_element("Sword")
+        self.player.Eq1.add_element("Potato")
+        self.player.Eq1.add_element("Sword")
+        self.player.Eq1.add_element("Potato")
+        self.player.Eq1.add_element("Sword")
+        self.player.Eq1.add_element("Axe")
+        self.player.Eq1.add_element("Potato")
+        self.player.Eq1.add_element("Axe")
         for i in range(len(self.player.Eq1.elements)):
             if self.player.Eq1.elements[i].is_weapon == 1:
                 self.player.Eq1.elements[i].is_weapon = 2
