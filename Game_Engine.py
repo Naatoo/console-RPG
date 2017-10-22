@@ -20,6 +20,7 @@ class GameMain:
         # ----------------------------------
         # WITH TUTORIAL
         # ----------------------------------
+        x = 0
         if run_tutorial == "1":
             # FIRST MOVE
             Tutorial.start_tutorial()
@@ -27,7 +28,7 @@ class GameMain:
             self.game_now = Game()
             self.game_now.now_map.print_map(if_got_map=0)
             Tutorial.moving_guide()
-            user_input = Checking.check_input_move(self)
+            user_input = Checking.check_input_move()
             x = self.game_now.choose_direction(self.game_now.x, user_input)
 
             # SECOND MOVE
@@ -43,7 +44,6 @@ class GameMain:
             # CREATION OF GAME'S MAIN OBJECT
             self.game_now = Game()
             x = self.game_now.x
-            self.game_now.now_map.print_map(if_got_map=0)
 
         # How many times you talked with NPC
         self.meet_mals = {"Alchemist": [0, 0], "Guard": [0, 0], "Monk": [0, 0]}
@@ -111,7 +111,14 @@ class GameMain:
         # ----------------------------------------------------------
         # START GAME
         # ----------------------------------------------------------
+        if run_tutorial == "2":
+            self.game_now.now_map.print_map(if_got_map=0)
+
         self.automatic_loop(x)
+
+    # ----------------------------------------------------------
+    # AUTOMATIC ->> THESE MUST BE CHECKED AFTER EVERY MOVE
+    # ----------------------------------------------------------
 
     def automatic_loop(self, x):
         user_input = 0
@@ -137,12 +144,7 @@ class GameMain:
                 break
             print("")
             x = self.game_now.choose_direction(x, user_input)
-
             self.show_map()
-
-            # ----------------------------------------------------------
-            # AUTOMATIC ->> THESE MUST BE CHECKED AFTER EVERY MOVE
-            # ----------------------------------------------------------
 
             # Run fight mode if possible
             if self.game_now.check_if_able_to_fight(x, self.game_now.enemies_spawn.enemies):
@@ -184,11 +186,9 @@ class GameMain:
 
             # Check whether player can open the gate
             if "Golden Key" in self.game_now.player.Eq1.items_names() and x == self.game_now.now_map.camp_gate + 1:
-                self.open_gate(x)
+                self.open_gate()
 
-            # ----------------------------------------------------------
-            # NON-AUTOMATIC ->> PLAYER CAN CHOOSE
-            # ----------------------------------------------------------
+
             user_input = GameMain.non_automatic_loop(self, x)
             if user_input == "save":
                 self.save = 1
@@ -206,10 +206,14 @@ class GameMain:
             if self.end == 1:
                 break
 
+    # ----------------------------------------------------------
+    # NON-AUTOMATIC ->> PLAYER CAN CHOOSE
+    # ----------------------------------------------------------
+
     def non_automatic_loop(self, x):
         user_input = 0
         while user_input not in ["w", "s", "a", "d"]:
-            user_input = Checking.check_input_other(self)
+            user_input = Checking.check_input_other()
 
             # Main Menu
             if user_input == "0":
@@ -228,7 +232,7 @@ class GameMain:
             if user_input in ["w", "s", "a", "d"]:
                 break
 
-            # DISPLAY HELP/KEYBOARD POSSIBILITIES
+            # Display help
             if user_input == "h":
                 self.help()
 
@@ -292,16 +296,32 @@ class GameMain:
                     break
             self.game_now.now_map.map[self.game_now.now_map.camp_gate] = "O"
 
+    def set_weapon_default(self):
+        n = 0
+        for item in self.game_now.player.Eq1.elements:
+            print(item.is_weapon)
+            if item.is_weapon == 2:
+                n = 1
+        # IF NO WEAPON IS NOW USED, THEN SET ANYONE
+        if n == 0:
+            for item in self.game_now.player.Eq1.elements:
+                if item.is_weapon == 1:
+                    item.is_weapon = 2
+        return
+
     def change_weapon(self):
-        self.game_now.player.Eq1.display_weapons(if_change=1)
-        # [[name_of_weapon, name_of_weapon, name_of_weapon],[1,2,3]]
-        weapons_list = [["0"], ["0"]]
+        # [[name_of_weapon, name_of_weapon, name_of_weapon],[1, 2, 3]]
+        weapons_list = (["0"], ["0"])
         id = 1
         for item in self.game_now.player.Eq1.elements:
             if item.is_weapon in [1, 2]:
                 weapons_list[0].append(item.name)
                 weapons_list[1].append(str(id))
                 id += 1
+        if id == 1:
+            print("You have no weapons to change.")
+            return
+        self.game_now.player.Eq1.display_weapons(if_change=1)
         id_choice = 0
         while id_choice not in weapons_list[1]:
             id_choice = input("Which weapon do you want to use? Type the number: (type 0 to go back)")
@@ -368,27 +388,10 @@ class GameMain:
                     return
 
     def choose_NPC(self, x):
-        for i in range(len(self.game_now.NPC_spawn.NPC)):
-            if x == self.game_now.NPC_spawn.NPC[i]:
-                if i == 0:
-                    NPC = self.game_now.alchemist
-                if i == 1:
-                    NPC = self.game_now.blacksmith
-                if i == 2:
-                    NPC = self.game_now.cartographer
-                if i == 3:
-                    NPC = self.game_now.innkeeper_city
-                if i == 4:
-                    NPC = self.game_now.innkeeper_village
-                if i == 5:
-                    NPC = self.game_now.merchant_city
-                if i == 6:
-                    NPC = self.game_now.merchant_village
-                if i == 7:
-                    NPC = self.game_now.guard
-                if i == 8:
-                    NPC = self.game_now.monk
-        return NPC
+        for NPC in self.game_now.to_index_NPC:
+            if x == NPC.x:
+                met_NPC = NPC
+        return met_NPC
 
     def talk(self, x):
         NPC = self.choose_NPC(x)
@@ -481,6 +484,7 @@ class GameMain:
             for i in range(len(self.game_now.player.Eq1.elements)):
                 if self.game_now.player.Eq1.elements[i].name == "Bone Sword":
                     self.game_now.player.Eq1.remove_element(i)
+                    self.set_weapon_default()
                     break
             self.meet_mals["Monk"][0] = 2
             self.game_now.player.Eq1.add_element("Golden Key")
@@ -668,7 +672,6 @@ class GameMain:
                     self.display_eq_trade_player()
                     self.display_eq_trade_trader(trader)
                     no_sell = 0
-                print("")
                 print("Do you want to buy or sell something?")
                 print("1. Buy.")
                 print("2. Sell")
@@ -693,37 +696,38 @@ class GameMain:
             if user_choice != "0":
                 user_choice = None
 
-    def give_names_buy(self, trader):
-        names = []
-        for i in range(len(trader.Equipment.elements)):
-            names.append(trader.Equipment.elements[i].name)
-        return names
-
-    def give_names_sell(self):
-        names = []
-        for i in range(len(self.game_now.player.Eq1.elements)):
-            names.append(self.game_now.player.Eq1.elements[i].name)
-        return names
-
     def buying_mode(self, trader):
-        names = self.give_names_buy(trader)
-        name = 1
-        print("What would you like to buy?")
-        names.append("0")
-        while name not in names:
-            name = input("Type the item's name (or type 0 to end buying):")
-            if name == "0":
-                return name
+        end_buy = 0
+        while end_buy != 1:
+            self.display_eq_trade_trader(trader)
+            # [[name_of_item, name_of_item, name_of_item],[1, 2, 3]]
+            items_list = (["0"], ["0"])
+            id = 1
+            for item in trader.Equipment.elements:
+                items_list[0].append(item.name)
+                items_list[1].append(str(id))
+                id += 1
+            id_choice = 0
+            while id_choice not in items_list[1]:
+                id_choice = input("What do you want to buy? Type the number: (type 0 to go back)")
+            if id_choice == "0":
+                return id_choice
+            # change chosen id into item's name
+            for i in range(len(items_list[1])):
+                if id_choice == items_list[1][i]:
+                    name = items_list[0][i]
             if name == "Golden Key":
                 print(trader.name, "does not sell this item.")
-                break
+                end_buy = 1
             for i in range(len(trader.Equipment.elements)):
                 if name == trader.Equipment.elements[i].name:
                     if self.game_now.player.Eq1.gold >= trader.Equipment.elements[i].value:
                         print("")
-                        print("-" * 50)
+                        print("-" * 80)
+                        print("+" * 80)
                         print("You bought", name, "for", trader.Equipment.elements[i].value, "gold.")
-                        print("-" * 50)
+                        print("+" * 80)
+                        print("-" * 80)
                         self.game_now.player.Eq1.gold -= trader.Equipment.elements[i].value
                         trader.Equipment.gold += trader.Equipment.elements[i].value
                         self.game_now.player.Eq1.add_element(name)
@@ -736,14 +740,26 @@ class GameMain:
                     print(trader.name, "do not sell this item")
 
     def selling_mode(self, trader):
-        names = self.give_names_sell()
-        name = 1
-        print("What would you like to sell?")
-        names.append("0")
-        while name not in names:
-            name = input("Type the item's name (or type 0 to end selling):")
-            if name == "0":
-                return name
+        end_sell = 0
+        while end_sell != 1:
+            self.display_eq_trade_player()
+            # [[name_of_item, name_of_item, name_of_item],[1, 2, 3]]
+            items_list = (["0"], ["0"])
+            id = 1
+            for item in self.game_now.player.Eq1.elements:
+                items_list[0].append(item.name)
+                items_list[1].append(str(id))
+                id += 1
+            id_choice = 0
+            print(items_list)
+            while id_choice not in items_list[1]:
+                id_choice = input("What do you want to sell? Type the number: (type 0 to go back)")
+            if id_choice == "0":
+                return id_choice
+            # change chosen id into item's name
+            for i in range(len(items_list[1])):
+                if id_choice == items_list[1][i]:
+                    name = items_list[0][i]
             if name == "Golden Key":
                 print("You cannot sell this item.")
                 continue
@@ -758,6 +774,8 @@ class GameMain:
                         trader.Equipment.gold -= self.game_now.player.Eq1.elements[i].value
                         trader.Equipment.add_element(name)
                         self.game_now.player.Eq1.remove_element(i)
+                        self.set_weapon_default()
+                        # WEAPONS FIRST IN EQ
                         break
                     else:
                         print(trader.name, " do not have enough gold.")
@@ -765,10 +783,10 @@ class GameMain:
                     print("You do not have this item.")
 
     def display_NPC_you_met(self, x):
-       for i in range(len(self.game_now.NPC_and_indexes)):
-           if x == self.game_now.NPC_spawn.NPC[i]:
-               NPC_here = i
-       print("There is", self.game_now.NPC_and_indexes[str(NPC_here)], "here. You can talk with him.")
+        for NPC in self.game_now.to_index_NPC:
+            if x == NPC.x:
+                print("There is", NPC.name, "here. You can talk with him.")
+                return
 
     def help(self):
         print("")
@@ -820,7 +838,6 @@ class GameMain:
                 except IndexError:
                     pass
                 break
-
 
     def display_stats(self):
         print("-" * 50)
@@ -885,8 +902,8 @@ class GameMain:
             player_time_check = int(Decimal(player_time_now - player_time_begin) * 10)
             enemy_time_check = int(Decimal(enemy_time_now - enemy_time_begin) * 10)
 
-         #   print(player_time_check)
-        #    print("       ", enemy_time_check)
+            print(player_time_check)
+            print("       ", enemy_time_check)
 
             # Player's hit
             if player_time_check == player_as:
@@ -933,14 +950,16 @@ class GameMain:
 
 
 class Checking:
-    def check_input_move(self):
+    @staticmethod
+    def check_input_move():
         user_input = 0
         while user_input not in ["w", "a", "s", "d"]:
             print("_" * 50)
             user_input = input("Type the sign: ")
         return user_input
 
-    def check_input_other(self):
+    @staticmethod
+    def check_input_other():
         user_input = 0
         while user_input not in ["w", "a", "s", "d", "c", "i", "m", "h", "b", "t", "n", "e", "q", "0"]:
             print("___________________________________________________________________________")

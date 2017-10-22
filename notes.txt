@@ -17,7 +17,8 @@
 ---done20. Print items in columns
 ---done21. map legend
 ---done22. Sleep in the beginning
----done23, Display multiple items on the ground
-
+---done23. Display multiple items on the ground
 ---done24. inn ->add minimum gold player need to have
-25. monk -> when takes sword -> it can be deafualt -> make other deafult automatically
+---done25. monk -> when takes sword -> it can be deafualt -> make other deafult automatically
+26. end-game function
+---done27. sell/buy by index not name

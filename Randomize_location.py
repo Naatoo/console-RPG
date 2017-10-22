@@ -99,6 +99,7 @@ class GenerateNPC:
         self.NPC.append(NPC_choice_temp)
         self.NPC_in_village.remove(NPC_choice_temp)
 
+
 class GenerateWolf:
     def __init__(self):
         self.wolf = []

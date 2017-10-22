@@ -12,7 +12,7 @@ class Player:
 
         # GENERATE EQ
         self.Eq1 = Eq(self.capacity)
-        items_start = ["Sword", "Potato", "Bottle of Water"]
+        items_start = ["Sword", "Potato", "Bottle of Water", "Bone Sword"]
         for item in items_start:
             self.Eq1.add_element(item)
 
@@ -33,7 +33,7 @@ class Player:
         orc_attributes = {
             "hp": 400,
             "strength": 15,
-            "agility": 15,
+            "agility": 16,
             "capacity": 2000
             }
         elf_attributes = {

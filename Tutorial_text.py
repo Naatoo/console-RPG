@@ -17,7 +17,7 @@ class Tutorial:
             "HP shows how much hits you can stand.",
             "Strength is responsible for your damage.",
             "The higher agility you have the faster you attack."
-        ]
+            ]
         [Tutorial.print_and_sleep(sentence) for sentence in text]
 
     @staticmethod
@@ -31,7 +31,7 @@ class Tutorial:
             "a - Go west",
             "d - Go east",
             "Move in any direction (nothing is going to kill you there)."
-        ]
+            ]
         [Tutorial.print_and_sleep(sentence) for sentence in text]
 
     @staticmethod
@@ -39,7 +39,7 @@ class Tutorial:
         text = [
             "You can always type 'm' to see the map.",
             "Now, type 'h' to see other possible actions"
-        ]
+            ]
         [Tutorial.print_and_sleep(sentence) for sentence in text]
         help = 0
         while help != "h":
@@ -56,7 +56,7 @@ class Tutorial:
             "Look for some job in the city or in the village.",
             "You are on your own now.",
             "Good luck."
-        ]
+            ]
         [Tutorial.print_and_sleep(sentence) for sentence in text]
 
     @staticmethod

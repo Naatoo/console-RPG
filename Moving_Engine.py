@@ -57,9 +57,14 @@ class Game:
         self.innkeeper_city = NPC("Innkeeper", self.NPC_spawn.NPC[3])
         self.merchant_city = NPC("Merchant", self.NPC_spawn.NPC[4])
         self.guard = NPC("Guard", self.NPC_spawn.NPC[5])
-        self.innkeeper_village = NPC("Innkeeper", self.NPC_spawn.NPC[6])
-        self.merchant_village = NPC("Merchant", self.NPC_spawn.NPC[7])
-        self.monk = NPC("Monk", self.NPC_spawn.NPC[8])
+        self.monk = NPC("Monk", self.NPC_spawn.NPC[6])
+        self.innkeeper_village = NPC("Innkeeper", self.NPC_spawn.NPC[7])
+        self.merchant_village = NPC("Merchant", self.NPC_spawn.NPC[8])
+
+        self.to_index_NPC = [
+            self.alchemist, self.blacksmith, self.cartographer, self.innkeeper_city, self.merchant_city,
+            self.guard, self.monk, self.innkeeper_village, self.merchant_village
+            ]
 
     def choose_direction(self, x, direction):
         if direction == "w":
