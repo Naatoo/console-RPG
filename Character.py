@@ -12,6 +12,15 @@ class Player:
 
         # GENERATE EQ
         self.Eq1 = Eq(self.capacity)
+        items_start = ["Sword", "Potato", "Bottle of Water"]
+        for item in items_start:
+            self.Eq1.add_element(item)
+
+        # SET A WEAPON AS THE ONE NOW USED
+        for item in self.Eq1.elements:
+            if item.is_weapon == 1:
+                item.is_weapon = 2
+                break
 
     @staticmethod
     def beginning():
@@ -57,5 +66,3 @@ class Player:
             else:
                 race = elf_attributes
                 return race
-
-

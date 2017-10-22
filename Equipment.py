@@ -221,9 +221,9 @@ class Item:
             "Wolf Fur": 0
             }
         self.name = name
-        self.points = points[name]
-        self.description = description[name]
         self.value = value[name]
+        self.points = points[name]
         self.damage = damage[name]
         self.attack_speed = attack_speed[name]
         self.is_weapon = is_weapon[name]
+        self.description = description[name]

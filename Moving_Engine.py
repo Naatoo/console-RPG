@@ -1,27 +1,14 @@
 from Character import Player
 from Map import MapNew
-from Generate_objects_indexes import GenerateNPC, GenerateEnemies
+from Randomize_location import GenerateNPC, GenerateEnemies
 from Enemy import NPC
 
 
 class Game:
     def __init__(self):
+
         # GENERATE CHARACTER
         self.player = Player()
-        self.player.Eq1.add_element("Sword")
-        self.player.Eq1.add_element("Potato")
-        self.player.Eq1.add_element("Sword")
-        self.player.Eq1.add_element("Potato")
-        self.player.Eq1.add_element("Sword")
-        self.player.Eq1.add_element("Axe")
-        self.player.Eq1.add_element("Potato")
-        self.player.Eq1.add_element("Axe")
-        for i in range(len(self.player.Eq1.elements)):
-            if self.player.Eq1.elements[i].is_weapon == 1:
-                self.player.Eq1.elements[i].is_weapon = 2
-                break
-        self.player.Eq1.add_element("Potato")
-        self.player.Eq1.add_element("Bottle of Water")
         self.if_icon_not_to_disappear = 0
 
         # SPAWN CHARACTER
@@ -52,16 +39,26 @@ class Game:
         self.NPC_spawn = GenerateNPC(
             self.now_map.river_location, self.now_map.mountain_location,
             self.now_map.city_location, self.now_map.village_location, self.now_map.sea_location)
-        self.NPC_and_indexes = {"0": "Alchemist", "1": "Blacksmith", "2": "Cartographer", "3": "Innkeeper",
-                                "4": "Innkeeper", "5": "Merchant", "6": "Merchant", "7": "Guard", "8": "Monk"}
+
+        for NPCs_nr in range(6):
+            self.NPC_spawn.x_NPC_city()
+        for NPCs_nr in range(3):
+            self.NPC_spawn.x_NPC_village()
+        self.NPC_and_indexes = {
+            # NPC IN CITY
+            "0": "Alchemist", "1": "Blacksmith", "2": "Cartographer",
+            "3": "Innkeeper", "4": "Merchant", "5": "Guard",
+            # NPC IN VILLAGE
+            "6": "Monk", "7": "Innkeeper", "8": "Merchant"
+            }
         self.alchemist = NPC("Alchemist", self.NPC_spawn.NPC[0])
         self.blacksmith = NPC("Blacksmith", self.NPC_spawn.NPC[1])
         self.cartographer = NPC("Cartographer", self.NPC_spawn.NPC[2])
         self.innkeeper_city = NPC("Innkeeper", self.NPC_spawn.NPC[3])
-        self.innkeeper_village = NPC("Innkeeper", self.NPC_spawn.NPC[4])
-        self.merchant_city = NPC("Merchant", self.NPC_spawn.NPC[5])
-        self.merchant_village = NPC("Merchant", self.NPC_spawn.NPC[6])
-        self.guard = NPC("Guard", self.NPC_spawn.NPC[7])
+        self.merchant_city = NPC("Merchant", self.NPC_spawn.NPC[4])
+        self.guard = NPC("Guard", self.NPC_spawn.NPC[5])
+        self.innkeeper_village = NPC("Innkeeper", self.NPC_spawn.NPC[6])
+        self.merchant_village = NPC("Merchant", self.NPC_spawn.NPC[7])
         self.monk = NPC("Monk", self.NPC_spawn.NPC[8])
 
     def choose_direction(self, x, direction):

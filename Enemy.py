@@ -7,7 +7,7 @@ class Enemy:
         #   enemy: [hp, strength, agility, capacity]
         #   }
         enemies = {
-            "Bandit": [500, 8, 10, 1000],
+            "Bandit": (500, 8, 10, 1000),
             "Skeleton": [800, 5, 6, 500],
             "Rat": [200, 4, 10, 300],
             "Giant": [2000, 40, 5, 10000],
@@ -19,7 +19,7 @@ class Enemy:
             "Rat": ["Teeth", "Rat Fur"],
             "Giant": ["Axe"],
             "Wolf": ["Paw"],
-            "Potato": ["Wolf Fur"]
+           # "Potato": ["Wolf Fur"]
             }
         self.name = name
         self.hp = enemies[name][0]

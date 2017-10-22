@@ -6,7 +6,7 @@ from Tutorial_text import Tutorial
 from Moving_Engine import Game
 from Enemy import Enemy
 from Equipment import Item
-from Generate_objects_indexes import GenerateMisc, GenerateWolf, GeneratePotato
+from Randomize_location import GenerateMisc, GenerateWolf, GeneratePotato
 
 
 class GameMain:
@@ -765,10 +765,10 @@ class GameMain:
                     print("You do not have this item.")
 
     def display_NPC_you_met(self, x):
-        for i in range(len(self.game_now.NPC_and_indexes)):
-            if x == self.game_now.NPC_spawn.NPC[i]:
-                NPC_here = i
-        print("There is", self.game_now.NPC_and_indexes[str(NPC_here)], "here. You can talk with him.")
+       for i in range(len(self.game_now.NPC_and_indexes)):
+           if x == self.game_now.NPC_spawn.NPC[i]:
+               NPC_here = i
+       print("There is", self.game_now.NPC_and_indexes[str(NPC_here)], "here. You can talk with him.")
 
     def help(self):
         print("")
