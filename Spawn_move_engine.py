@@ -1,13 +1,14 @@
 from Character import Player
 from Map import MapNew
 from Randomize_location import GenerateNPC, GenerateEnemies, GenerateItemsGround
+from Randomize_location import GenerateWolf, GeneratePotato
 from NPC import NPC
 from Items import Item
 
 
 class Game:
     def __init__(self):
-
+        # ----------------------------------------
         # GENERATE CHARACTER
         self.player = Player()
         self.if_icon_not_to_disappear = 0
@@ -22,36 +23,19 @@ class Game:
             self.x = 75
         self.now_map = m1
 
-        # GENERATE ENEMIES
-        self.enemies_spawn = GenerateEnemies(
-            self.now_map.river_location, self.now_map.mountain_location,
-            self.now_map.city_location, self.now_map.village_location,
-            self.now_map.sea_location, self.now_map.camp_location)
-        self.enemies_and_indexes = {"0": ["b", "Bandit"], "1": ["s", "Skeleton"], "2": ["r", "Rat"],
-                                    "3": ["O", "Giant"], "4": ["w", "Wolf"]}
-
-        # SPAWN ENEMIES
-        for i in range(100):
-            for k in range(len(self.enemies_and_indexes) - 1):
-                if i in self.enemies_spawn.enemies[k]:
-                    self.now_map.map[i] = self.enemies_and_indexes[str(k)][0]
-
+        # ----------------------------------------
         # GENERATE NPC
         self.NPC_spawn = GenerateNPC(
             self.now_map.river_location, self.now_map.mountain_location,
             self.now_map.city_location, self.now_map.village_location, self.now_map.sea_location)
 
-        for NPCs_nr in range(6):
-            self.NPC_spawn.x_NPC_city()
-        for NPCs_nr in range(3):
-            self.NPC_spawn.x_NPC_village()
         self.NPC_and_indexes = {
-            # NPC IN CITY
             "0": "Alchemist", "1": "Blacksmith", "2": "Cartographer",
             "3": "Innkeeper", "4": "Merchant", "5": "Guard",
-            # NPC IN VILLAGE
             "6": "Monk", "7": "Innkeeper", "8": "Merchant"
             }
+
+        # SPAWN NPC
         self.alchemist = NPC("Alchemist", self.NPC_spawn.NPC[0])
         self.blacksmith = NPC("Blacksmith", self.NPC_spawn.NPC[1])
         self.cartographer = NPC("Cartographer", self.NPC_spawn.NPC[2])
@@ -67,22 +51,87 @@ class Game:
             self.guard, self.monk, self.innkeeper_village, self.merchant_village
             ]
 
+        # ----------------------------------------
+        # GENERATE ENEMIES
+        self.enemies_spawn = GenerateEnemies(
+            self.now_map.river_location, self.now_map.mountain_location,
+            self.now_map.city_location, self.now_map.village_location,
+            self.now_map.sea_location, self.now_map.camp_location)
+
+        self.enemies_and_indexes = {
+            "0": ["b", "Bandit"], "1": ["s", "Skeleton"], "2": ["r", "Rat"],
+            "3": ["O", "Giant"], "4": ["w", "Wolf"]
+            }
+
+        # SPAWN ENEMIES
+        for i in range(100):
+            for k in range(len(self.enemies_and_indexes) - 1):
+                if i in self.enemies_spawn.enemies[k]:
+                    self.now_map.map[i] = self.enemies_and_indexes[str(k)][0]
+
+        # ----------------------------------------
         # GENERATE ITEMS ON THE GROUND
         self.items_map = []
-        for i in range(100):
-            self.items_map.append([])
+        [self.items_map.append([]) for i in range(100)]
+
+        self.misc_and_indexes = {"0": ["R", "Reed"], "1": ["P", "Potato"]}
 
         self.items_spawn = GenerateItemsGround(
                 self.now_map.river_location, self.now_map.mountain_location,
                 self.now_map.city_location, self.now_map.village_location,
                 self.now_map.sea_location)
-        self.misc_and_indexes = {"0": ["R", "Reed"], "1": ["P", "Potato"]}
 
         # SPAWN ITEMS
         for i in range(100):
             for k in range(len(self.misc_and_indexes) - 1):
                 if i in self.items_spawn.misc[k]:
                     self.items_map[i].append(Item(self.misc_and_indexes[str(k)][1]))
+
+        # FREE X FOR WOLF
+        self.occupied_x = []
+        for i in range(len(self.items_spawn.misc)):
+            for k in range(len(self.items_spawn.misc[i])):
+                self.occupied_x.append(self.items_spawn.misc[i][k])
+        for i in range(len(self.enemies_spawn.enemies)):
+            for k in range(len(self.enemies_spawn.enemies[i])):
+                self.occupied_x.append(self.enemies_spawn.enemies[i][k])
+        for i in range(100):
+            if self.now_map.map[i] != "O":
+                self.occupied_x.append(i)
+        self.free_x = []
+        for i in range(100):
+            if i not in self.occupied_x:
+                self.free_x.append(i)
+
+        # Do not spawn wolf in range of 1st move
+        if self.x + 1 in self.free_x:
+            self.free_x.remove(self.x + 1)
+        if self.x - 1 in self.free_x:
+            self.free_x.remove(self.x - 1)
+        if self.x == 25:
+            self.free_x.remove(15)
+        if self.x == 75:
+            self.free_x.remove(85)
+
+        # GENERATE WOLF
+        self.wolf_spawn = GenerateWolf()
+        self.free_x_potato = self.wolf_spawn.wolf_x(self.free_x)
+
+        # SPAWN WOLF
+        self.enemies_spawn.enemies.append(self.wolf_spawn.wolf)
+        for i in range(100):
+            if i in self.enemies_spawn.enemies[4]:
+                self.now_map.map[i] = "w"
+
+        # GENERATE POTATO
+        self.potato_spawn = GeneratePotato()
+        self.potato_spawn.potato_x(self.free_x_potato)
+        self.items_spawn.misc.append(self.potato_spawn.potato)
+
+        # SPAWN POTATO
+        for i in range(100):
+            if i in self.items_spawn.misc[1]:
+                self.items_map[i].append(Item(self.misc_and_indexes[str(1)][1]))
 
     def choose_direction(self, x, direction):
         if direction == "w":

@@ -73,7 +73,6 @@ class GenerateItemsGround:
         return reed_location
 
 
-
 class GenerateNPC:
     def __init__(self, river_location, mountain_location,
                  city_location, village_location, sea_location):
@@ -89,6 +88,12 @@ class GenerateNPC:
         self.NPC_in_village = []
         for i in range(3):
             self.NPC_in_village.append(village_location * 10 + i)
+
+        # 6 NPC in the city, 3 NPC in village
+        for NPCs_nr in range(6):
+            self.x_NPC_city()
+        for NPCs_nr in range(3):
+            self.x_NPC_village()
 
     def x_NPC_city(self):
         NPC_choice_temp = choice(self.NPC_in_city)

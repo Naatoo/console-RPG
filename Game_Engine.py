@@ -3,10 +3,9 @@ from time import sleep, time
 from decimal import Decimal
 
 from Tutorial_text import Tutorial
-from Moving_Engine_Spawn import Game
+from Spawn_move_engine import Game
 from Enemy import Enemy
 from Items import Item
-from Randomize_location import GenerateWolf, GeneratePotato
 
 
 class GameMain:
@@ -47,49 +46,6 @@ class GameMain:
 
         # How many times you talked with NPC
         self.meet_mals = {"Alchemist": [0, 0], "Guard": [0, 0], "Monk": [0, 0]}
-
-        # FREE X FOR WOLF
-        self.occupied_x = []
-        for i in range(len(self.game_now.items_spawn.misc)):
-            for k in range(len(self.game_now.items_spawn.misc[i])):
-                self.occupied_x.append(self.game_now.items_spawn.misc[i][k])
-        for i in range(len(self.game_now.enemies_spawn.enemies)):
-            for k in range(len(self.game_now.enemies_spawn.enemies[i])):
-                self.occupied_x.append(self.game_now.enemies_spawn.enemies[i][k])
-        for i in range(100):
-            if self.game_now.now_map.map[i] != "O":
-                self.occupied_x.append(i)
-        self.free_x = []
-        for i in range(100):
-            if i not in self.occupied_x:
-                self.free_x.append(i)
-
-        # Do not spawn wolf in range of 1st move
-        if self.game_now.x + 1 in self.free_x:
-            self.free_x.remove(self.game_now.x + 1)
-        if self.game_now.x - 1 in self.free_x:
-            self.free_x.remove(self.game_now.x - 1)
-        if self.game_now.x == 25:
-            self.free_x.remove(15)
-        if self.game_now.x == 75:
-            self.free_x.remove(85)
-        # GENERATE WOLF
-        self.wolf_spawn = GenerateWolf()
-        self.free_x_potato = self.wolf_spawn.wolf_x(self.free_x)
-        # SPAWN WOLF
-        self.game_now.enemies_spawn.enemies.append(self.wolf_spawn.wolf)
-        for i in range(100):
-            if i in self.game_now.enemies_spawn.enemies[4]:
-                self.game_now.now_map.map[i] = "w"
-
-        # GENERATE POTATO
-        self.potato_spawn = GeneratePotato()
-        self.potato_spawn.potato_x(self.free_x_potato)
-        self.game_now.items_spawn.misc.append(self.potato_spawn.potato)
-        # SPAWN POTATO
-        for i in range(100):
-            if i in self.game_now.items_spawn.misc[1]:
-                self.game_now.items_map[i].append(Item(self.game_now.misc_and_indexes[str(1)][1]))
 
         # ----------------------------------------------------------
         # START GAME
@@ -805,7 +761,6 @@ class GameMain:
                 print(self.game_now.items_map[x][i].name, end=", ")
         print("on the ground.")
         print("-" * 50)
-
 
     def collect_items(self, x):
         quantity = len(self.game_now.items_map[x])
