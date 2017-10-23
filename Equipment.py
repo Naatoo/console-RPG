@@ -10,11 +10,16 @@ class Eq:
     def remove_element(self, i):
         self.elements.pop(i)
 
-    def sort_items(self):
+    def sort_items_weapon(self):
         self.elements.sort(key=lambda x: x.is_weapon, reverse=True)
 
+    def sort_items_eat_drink(self):
+        for item in range(len(self.elements)):
+            if self.elements[item].points is not None:
+                self.elements.insert(0, self.elements.pop(item))
+
     def display_eq(self):
-        self.sort_items()
+        self.sort_items_weapon()
         w = 0
         m = 0
         print("*" * 80)
@@ -52,7 +57,7 @@ class Eq:
 
     # SHOW WEAPONS (OR CHANGE WEAPON OPTION)
     def display_weapons(self, if_change):
-        self.sort_items()
+        self.sort_items_weapon()
         print("*" * 80)
         print("WEAPONS")
         print("*" * 80)
@@ -85,21 +90,13 @@ class Eq:
         return id
 
     def display_items_eat_drink(self):
-        self.sort_items()
-        n = 0
-        for item in self.elements:
-            if item.points is not None:
-                n += 1
-        if n == 0:
-            print("You don't have items to eat or drink")
-            return
         print("*" * 80)
         print("ITEMS TO CONSUME")
         print("*" * 80)
-        number = 0
+        number = 1
         for item in self.elements:
             if item.points is not None:
-                print(number + 1, end="")
+                print(number, end="")
                 print(".", item.name)
                 if item.name in ["Potato", "Bottle of Water"]:
                     print("Restore HP ", end="")
@@ -111,7 +108,7 @@ class Eq:
                     print("Increase Agility by ", end="")
                 print(item.points)
                 print("-" * 50)
-            number += 1
+                number += 1
 
     def items_names(self):
         names = []

@@ -12,7 +12,7 @@ class Player:
 
         # GENERATE EQ
         self.Eq1 = Eq(self.capacity)
-        items_start = ["Sword", "Potato", "Bottle of Water", "Bone Sword"]
+        items_start = ["Sword", "Potato", "Bottle of Water", "Bone Sword", "HP Potion", "Strength Potion"]
         for item in items_start:
             self.Eq1.add_element(item)
 

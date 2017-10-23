@@ -22,3 +22,6 @@
 ---done25. monk -> when takes sword -> it can be deafualt -> make other deafult automatically
 26. end-game function
 ---done27. sell/buy by index not name
+27. eat/drink via index
+28. spawn wolf in Moving_Engine_Spawn
+29. new quest/talk system
