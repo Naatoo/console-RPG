@@ -17,7 +17,7 @@ class Tutorial:
             "HP shows how much hits you can stand.",
             "Strength is responsible for your damage.",
             "The higher agility you have the faster you attack."
-            ]
+        ]
         [Tutorial.print_and_sleep(sentence) for sentence in text]
 
     @staticmethod

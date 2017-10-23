@@ -51,11 +51,11 @@ class GenerateEnemies:
         return giant_location
 
 
-class GenerateMisc:
+class GenerateItemsGround:
     def __init__(self, river_location, mountain_location,
                  city_location, village_location, sea_location):
         self.misc = []
-        self.misc.append((GenerateMisc.reed(river_location)))
+        self.misc.append((self.reed(river_location)))
 
     @staticmethod
     def reed(river_location):
@@ -71,6 +71,7 @@ class GenerateMisc:
             n += 3
         reed_location.append((river_location + 2 * sign) * 10 + 4)
         return reed_location
+
 
 
 class GenerateNPC:

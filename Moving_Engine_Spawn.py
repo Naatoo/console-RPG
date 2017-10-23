@@ -1,7 +1,8 @@
 from Character import Player
 from Map import MapNew
-from Randomize_location import GenerateNPC, GenerateEnemies
-from Enemy import NPC
+from Randomize_location import GenerateNPC, GenerateEnemies, GenerateItemsGround
+from NPC import NPC
+from Items import Item
 
 
 class Game:
@@ -66,6 +67,23 @@ class Game:
             self.guard, self.monk, self.innkeeper_village, self.merchant_village
             ]
 
+        # GENERATE ITEMS ON THE GROUND
+        self.items_map = []
+        for i in range(100):
+            self.items_map.append([])
+
+        self.items_spawn = GenerateItemsGround(
+                self.now_map.river_location, self.now_map.mountain_location,
+                self.now_map.city_location, self.now_map.village_location,
+                self.now_map.sea_location)
+        self.misc_and_indexes = {"0": ["R", "Reed"], "1": ["P", "Potato"]}
+
+        # SPAWN ITEMS
+        for i in range(100):
+            for k in range(len(self.misc_and_indexes) - 1):
+                if i in self.items_spawn.misc[k]:
+                    self.items_map[i].append(Item(self.misc_and_indexes[str(k)][1]))
+
     def choose_direction(self, x, direction):
         if direction == "w":
             index_changer = -10
@@ -116,7 +134,8 @@ class Game:
         self.if_icon_not_to_disappear = self.now_map.map[check]
         self.now_map.map[check] = "x"
 
-    def check_if_able_to_fight(self, x, enemies_spawn):
+    @staticmethod
+    def check_if_able_to_fight(x, enemies_spawn):
         for i in range(len(enemies_spawn)):
             if x in enemies_spawn[i]:
                 return True

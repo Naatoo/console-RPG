@@ -5,8 +5,8 @@ from decimal import Decimal
 from Tutorial_text import Tutorial
 from Moving_Engine_Spawn import Game
 from Enemy import Enemy
-from Equipment import Item
-from Randomize_location import GenerateMisc, GenerateWolf, GeneratePotato
+from Items import Item
+from Randomize_location import GenerateWolf, GeneratePotato
 
 
 class GameMain:
@@ -48,28 +48,11 @@ class GameMain:
         # How many times you talked with NPC
         self.meet_mals = {"Alchemist": [0, 0], "Guard": [0, 0], "Monk": [0, 0]}
 
-        # GENERATE ITEMS ON THE GROUND
-        self.items_map = []
-        for i in range(100):
-            self.items_map.append([])
-
-        self.items_spawn = GenerateMisc(
-            self.game_now.now_map.river_location, self.game_now.now_map.mountain_location,
-            self.game_now.now_map.city_location, self.game_now.now_map.village_location,
-            self.game_now.now_map.sea_location)
-        self.misc_and_indexes = {"0": ["R", "Reed"], "1": ["P", "Potato"]}
-
-        # SPAWN ITEMS
-        for i in range(100):
-            for k in range(len(self.misc_and_indexes) - 1):
-                if i in self.items_spawn.misc[k]:
-                    self.items_map[i].append(Item(self.misc_and_indexes[str(k)][1]))
-
         # FREE X FOR WOLF
         self.occupied_x = []
-        for i in range(len(self.items_spawn.misc)):
-            for k in range(len(self.items_spawn.misc[i])):
-                self.occupied_x.append(self.items_spawn.misc[i][k])
+        for i in range(len(self.game_now.items_spawn.misc)):
+            for k in range(len(self.game_now.items_spawn.misc[i])):
+                self.occupied_x.append(self.game_now.items_spawn.misc[i][k])
         for i in range(len(self.game_now.enemies_spawn.enemies)):
             for k in range(len(self.game_now.enemies_spawn.enemies[i])):
                 self.occupied_x.append(self.game_now.enemies_spawn.enemies[i][k])
@@ -102,11 +85,11 @@ class GameMain:
         # GENERATE POTATO
         self.potato_spawn = GeneratePotato()
         self.potato_spawn.potato_x(self.free_x_potato)
-        self.items_spawn.misc.append(self.potato_spawn.potato)
+        self.game_now.items_spawn.misc.append(self.potato_spawn.potato)
         # SPAWN POTATO
         for i in range(100):
-            if i in self.items_spawn.misc[1]:
-                self.items_map[i].append(Item(self.misc_and_indexes[str(1)][1]))
+            if i in self.game_now.items_spawn.misc[1]:
+                self.game_now.items_map[i].append(Item(self.game_now.misc_and_indexes[str(1)][1]))
 
         # ----------------------------------------------------------
         # START GAME
@@ -175,7 +158,7 @@ class GameMain:
 
             # Display items on the ground
             try:
-                if self.items_map[x][0] != 0:
+                if self.game_now.items_map[x][0] != 0:
                     self.display_items_on_the_ground(x)
             except IndexError:
                 pass
@@ -187,7 +170,6 @@ class GameMain:
             # Check whether player can open the gate
             if "Golden Key" in self.game_now.player.Eq1.items_names() and x == self.game_now.now_map.camp_gate + 1:
                 self.open_gate()
-
 
             user_input = GameMain.non_automatic_loop(self, x)
             if user_input == "save":
@@ -252,7 +234,7 @@ class GameMain:
 
             # Collect items from the ground
             if user_input == "c":
-                if len(self.items_map[x]) != 0:
+                if len(self.game_now.items_map[x]) != 0:
                     self.collect_items(x)
                 else:
                     print("There is nothing here you can take.")
@@ -816,31 +798,31 @@ class GameMain:
     def display_items_on_the_ground(self, x):
         print("-" * 50)
         print("You can see", end=" ")
-        for i in range(len(self.items_map[x])):
-            if i + 1 == len(self.items_map[x]):
-                print(self.items_map[x][i].name, end=" ")
+        for i in range(len(self.game_now.items_map[x])):
+            if i + 1 == len(self.game_now.items_map[x]):
+                print(self.game_now.items_map[x][i].name, end=" ")
             else:
-                print(self.items_map[x][i].name, end=", ")
+                print(self.game_now.items_map[x][i].name, end=", ")
         print("on the ground.")
         print("-" * 50)
 
 
     def collect_items(self, x):
-        quantity = len(self.items_map[x])
+        quantity = len(self.game_now.items_map[x])
         if quantity == 1:
-            self.game_now.player.Eq1.add_element(self.items_map[x][0].name)
-            print(self.items_map[x][0].name, end=" ")
-            self.items_map[x].remove(self.items_map[x][0])
+            self.game_now.player.Eq1.add_element(self.game_now.items_map[x][0].name)
+            print(self.game_now.items_map[x][0].name, end=" ")
+            self.game_now.items_map[x].remove(self.game_now.items_map[x][0])
             print("has been added to your inventory.")
         else:
             while True:
                 for i in range(quantity):
-                    self.game_now.player.Eq1.add_element(self.items_map[x][i].name)
+                    self.game_now.player.Eq1.add_element(self.game_now.items_map[x][i].name)
                 print("Items have been added to your inventory")
                 try:
                     n = 0
                     for i in range(quantity):
-                        self.items_map[x].remove(self.items_map[x][i - n])
+                        self.game_now.items_map[x].remove(self.game_now.items_map[x][i - n])
                         n += 1
                 except IndexError:
                     pass
@@ -932,7 +914,7 @@ class GameMain:
                                 enemy.Equipment.elements.pop(i)
                                 n = 1
                     for i in range(len(enemy.Equipment.elements)):
-                        self.items_map[x].append(Item(enemy.Equipment.elements[i].name))
+                        self.game_now.items_map[x].append(Item(enemy.Equipment.elements[i].name))
                     # Delete enemy from this coord
                     for i in range(len(self.game_now.enemies_spawn.enemies)):
                         if x in self.game_now.enemies_spawn.enemies[i]:
