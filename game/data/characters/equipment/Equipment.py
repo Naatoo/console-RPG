@@ -1,4 +1,4 @@
-from Items import Item
+from game.data.characters.equipment.Items import Item
 
 
 class Eq:

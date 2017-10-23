@@ -1,4 +1,4 @@
-from Equipment import Eq
+from game.data.characters.equipment.Equipment import Eq
 
 
 class NPC:

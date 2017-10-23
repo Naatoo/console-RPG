@@ -1,9 +1,9 @@
-from Character import Player
-from Map import MapNew
-from Randomize_location import GenerateNPC, GenerateEnemies, GenerateItemsGround
-from Randomize_location import GenerateWolf, GeneratePotato
-from NPC import NPC
-from Items import Item
+from game.data.random_map.Map import MapNew
+from game.data.random_map.Randomize_location import GenerateNPC, GenerateEnemies, GenerateItemsGround
+from game.data.random_map.Randomize_location import GenerateWolf, GeneratePotato
+from game.data.characters.Character import Player
+from game.data.characters.NPC import NPC
+from game.data.characters.equipment.Items import Item
 
 
 class Game:

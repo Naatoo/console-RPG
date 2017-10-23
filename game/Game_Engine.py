@@ -2,10 +2,10 @@ from random import randrange
 from time import sleep, time
 from decimal import Decimal
 
-from Tutorial_text import Tutorial
-from Spawn_move_engine import Game
-from Enemy import Enemy
-from Items import Item
+from game.tutorial.Tutorial_text import Tutorial
+from game.data.Spawn_move_engine import Game
+from game.data.characters.Enemy import Enemy
+from game.data.characters.equipment.Items import Item
 
 
 class GameMain:

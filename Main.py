@@ -1,4 +1,4 @@
-from Game_Engine import GameMain
+from game.Game_Engine import GameMain
 from copy import deepcopy
 from time import sleep
 
