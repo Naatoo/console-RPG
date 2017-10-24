@@ -2,6 +2,7 @@ from game.data.random_map.Map import MapNew
 from game.data.random_map.Randomize_location import GenerateNPC, GenerateEnemies, GenerateItemsGround
 from game.data.random_map.Randomize_location import GenerateWolf, GeneratePotato
 from game.data.characters.Character import Player
+from game.data.characters.Enemy import Enemy
 from game.data.characters.NPC import NPC
 from game.data.characters.equipment.Items import Item
 
@@ -63,11 +64,16 @@ class Game:
             "3": ["O", "Giant"], "4": ["w", "Wolf"]
             }
 
+        self.enemies_map = []
+        [self.enemies_map.append("a") for i in range(100)]
+
+
         # SPAWN ENEMIES
         for i in range(100):
             for k in range(len(self.enemies_and_indexes) - 1):
                 if i in self.enemies_spawn.enemies[k]:
                     self.now_map.map[i] = self.enemies_and_indexes[str(k)][0]
+                    self.enemies_map[i] = Enemy(self.enemies_and_indexes[str(k)][1])
 
         # ----------------------------------------
         # GENERATE ITEMS ON THE GROUND
@@ -122,6 +128,8 @@ class Game:
         for i in range(100):
             if i in self.enemies_spawn.enemies[4]:
                 self.now_map.map[i] = "w"
+                self.enemies_map[i] = Enemy(self.enemies_and_indexes[str(4)][1])
+
 
         # GENERATE POTATO
         self.potato_spawn = GeneratePotato()
@@ -183,10 +191,8 @@ class Game:
         self.if_icon_not_to_disappear = self.now_map.map[check]
         self.now_map.map[check] = "x"
 
-    @staticmethod
-    def check_if_able_to_fight(x, enemies_spawn):
-        for i in range(len(enemies_spawn)):
-            if x in enemies_spawn[i]:
-                return True
+    def check_if_able_to_fight(self, x):
+        if self.enemies_map[x] != "a":
+            return True
         return False
 

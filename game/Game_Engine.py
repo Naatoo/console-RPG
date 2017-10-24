@@ -94,7 +94,7 @@ class GameMain:
             self.show_map()
 
             # Run fight mode if possible
-            if self.game_now.check_if_able_to_fight(x, self.game_now.enemies_spawn.enemies):
+            if self.game_now.check_if_able_to_fight(x):
                 GameMain.battle(self, x)
             if self.dead == 1:
                 decision = 0
@@ -106,7 +106,7 @@ class GameMain:
                 else:
                     self.load = 1
                     break
-            self.game_now.enemies_spawn.enemies[3] = []
+
             if len(self.game_now.enemies_spawn.enemies[3]) == 0:
                 GameEnd.ask_if_want_quit()
                 user_choice = 0
@@ -822,7 +822,7 @@ class GameMain:
 
         # Enemy statistics
         enemy_name = GameMain.choose_opponent(self, x)
-        enemy = Enemy(enemy_name)
+        enemy = self.game_now.enemies_map[x]
         weapon_index = 0
         max_dmg = 0
         for i in range(len(enemy.Equipment.elements)):
