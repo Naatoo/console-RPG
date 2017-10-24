@@ -3,6 +3,18 @@ from time import sleep
 
 class Tutorial:
     @staticmethod
+    def tutorial_choice():
+        text = [
+            "-" * 50,
+            "Welcome in Natooland",
+            "Do you want to start a tutorial?",
+            "Type '1' to run tutorial",
+            "Type '2' to run the game without tutorial",
+            "-" * 50,
+        ]
+        [print(line) and sleep(1) for line in text]
+
+    @staticmethod
     def start_tutorial():
         text = [
             "-" * 50,
@@ -18,7 +30,7 @@ class Tutorial:
             "Strength is responsible for your damage.",
             "The higher agility you have the faster you attack."
         ]
-        [Tutorial.print_and_sleep(sentence) for sentence in text]
+        [Tutorial.print_and_sleep(line) for line in text]
 
     @staticmethod
     def moving_guide():
@@ -32,7 +44,7 @@ class Tutorial:
             "d - Go east",
             "Move in any direction (nothing is going to kill you there)."
             ]
-        [Tutorial.print_and_sleep(sentence) for sentence in text]
+        [Tutorial.print_and_sleep(line) for line in text]
 
     @staticmethod
     def insist_on_showing_help():
@@ -40,7 +52,7 @@ class Tutorial:
             "You can always type 'm' to see the map.",
             "Now, type 'h' to see other possible actions"
             ]
-        [Tutorial.print_and_sleep(sentence) for sentence in text]
+        [Tutorial.print_and_sleep(line) for line in text]
         help = 0
         while help != "h":
             help = input("Type h:")
@@ -57,7 +69,7 @@ class Tutorial:
             "You are on your own now.",
             "Good luck."
             ]
-        [Tutorial.print_and_sleep(sentence) for sentence in text]
+        [Tutorial.print_and_sleep(line) for line in text]
 
     @staticmethod
     def print_and_sleep(sentence):

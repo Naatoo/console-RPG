@@ -1,34 +1,13 @@
 from game.Game_Engine import GameMain
 from copy import deepcopy
-from time import sleep
 
-# Decide to start tutorial or not
-text = [
-    "-" * 50,
-    "Welcome in Natooland",
-    "Do you want to start a tutorial?",
-    "Type '1' to run tutorial",
-    "Type '2' to run the game without tutorial",
-    "-" * 50,
-    ]
-[print(line) and sleep(1) for line in text]
-user_choice = 0
-while user_choice not in ["1", "2"]:
-    user_choice = input("Type the number: ")
-game = GameMain(user_choice)
+game = GameMain()
 
 # MainMenu/save/load loop
 saves = []
 saves_names = []
 while True:
     if game.end == 1:
-        print("-" * 50)
-        sleep(1)
-        print("Thank you for playing.")
-        sleep(1)
-        print("Natoo 2017")
-        sleep(1)
-        print("-" * 50)
         break
     if game.save == 1:
         game.save = 0

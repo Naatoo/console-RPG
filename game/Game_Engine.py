@@ -2,19 +2,26 @@ from random import randrange
 from time import sleep, time
 from decimal import Decimal
 
-from game.tutorial.Tutorial_text import Tutorial
+from game.text.Tutorial import Tutorial
+from game.text.End import GameEnd
 from game.data.Spawn_move_engine import Game
 from game.data.characters.Enemy import Enemy
 from game.data.characters.equipment.Items import Item
 
 
 class GameMain:
-    def __init__(self, run_tutorial):
+    def __init__(self):
         self.save = 0
         self.load = 0
         self.end = 0
         self.dead = 0
         self.x = 0
+
+        # Decide to start tutorial or not
+        Tutorial.tutorial_choice()
+        run_tutorial = 0
+        while run_tutorial not in ["1", "2"]:
+            run_tutorial = input("Type the number: ")
 
         # ----------------------------------
         # WITH TUTORIAL
@@ -80,6 +87,7 @@ class GameMain:
                 self.game_now.now_map.map[x] = "O"
                 break
             if self.end == 1:
+                GameEnd.game_quited()
                 break
             print("")
             x = self.game_now.choose_direction(x, user_input)
@@ -98,19 +106,18 @@ class GameMain:
                 else:
                     self.load = 1
                     break
-
+            self.game_now.enemies_spawn.enemies[3] = []
             if len(self.game_now.enemies_spawn.enemies[3]) == 0:
-                for i in range(10):
-                    sleep(0.5)
-                    print("*" * (10 - i))
-                print("Congratulations.")
-                print("You have won.")
-                for i in range(10):
-                    sleep(0.5)
-                    print("*" * i)
-                print("Natoo 2017.")
-                self.end = 1
-                break
+                GameEnd.ask_if_want_quit()
+                user_choice = 0
+                while user_choice not in ["end", "0"]:
+                    user_choice = input("Type your choice")
+                if user_choice == "end":
+                    GameEnd.game_finished()
+                    self.end = 1
+                    break
+                else:
+                    self.game_now.enemies_spawn.enemies[3] = ["a", "a"]
 
             # Display items on the ground
             try:
@@ -846,8 +853,8 @@ class GameMain:
             player_time_check = int(Decimal(player_time_now - player_time_begin) * 10)
             enemy_time_check = int(Decimal(enemy_time_now - enemy_time_begin) * 10)
 
-            print(player_time_check)
-            print("       ", enemy_time_check)
+            # print(player_time_check)
+            # print("       ", enemy_time_check)
 
             # Player's hit
             if player_time_check == player_as:

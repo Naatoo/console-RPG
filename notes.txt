@@ -23,5 +23,5 @@
 26. end-game function
 ---done27. sell/buy by index not name
 ---done28. eat/drink via index
-29. spawn wolf in Moving_Engine_Spawn
+---done29. spawn wolf in Moving_Engine_Spawn
 30. new quest/talk system
