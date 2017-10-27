@@ -13,6 +13,14 @@ class Eq:
     def remove_element(self, i):
         self.elements.pop(i)
 
+    def remove_food(self, food_name):
+        id = 0
+        for item in self.elements:
+            if item.name == food_name:
+                self.elements.pop(id)
+                return
+            id += 1
+
     def sort_items_weapon(self):
         self.elements.sort(key=lambda x: x.is_weapon, reverse=True)
 
@@ -101,9 +109,9 @@ class Eq:
             if item.points is not None:
                 print(number, end="")
                 print(".", item.name)
-                if item.name in ["Potato", "Bottle of Water"]:
+                if item.name in ["Potato", "Bottle of Water", "Apple", "Hyaena's meet"]:
                     print("Restore HP ", end="")
-                if item.name in ["HP Potion"]:
+                if item.name in ["HP Potion", "Herb"]:
                     print("Increase HP", end="")
                 if item.name in ["Strength Potion"]:
                     print("Increase Strength by ", end="")

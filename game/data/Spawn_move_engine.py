@@ -103,7 +103,6 @@ class Game:
             for k in range(len(self.misc_and_indexes) - 4):
                 if i in self.items_spawn.misc[k]:
                     self.items_map[i].append(Item(self.misc_and_indexes[str(k)][1]))
-
         # ----------------------------------------
         # GENERATE LIST OF FREE PLACES ON MAP FOR ENEMIES
         # ----------------------------------------
@@ -142,23 +141,9 @@ class Game:
         # GENERATE LIST OF FREE PLACES ON MAP FOR ITEMS
         # ----------------------------------------
         for i in range(4):
-            self.items_spawn.misc.append([])
-            for k in range(3):
+            for k in range(10):
                 item_x = choice(free_x_items)
-                self.items_map[item_x] = Item(self.misc_and_indexes[str(1 + i)][1])
-                self.items_spawn.misc[i + 1].append(item_x)
-
-        print(self.items_map)
-        print(self.items_spawn.misc)
-        # # GENERATE POTATO
-        # self.potato_spawn = GeneratePotato()
-        # self.potato_spawn.potato_x(self.free_x_potato)
-        # self.items_spawn.misc.append(self.potato_spawn.potato)
-        #
-        # # SPAWN POTATO
-        # for i in range(100):
-        #     if i in self.items_spawn.misc[1]:
-        #         self.items_map[i].append(Item(self.misc_and_indexes[str(1)][1]))
+                self.items_map[item_x].append(Item(self.misc_and_indexes[str(1 + i)][1]))
 
     def choose_direction(self, x, direction):
         if direction == "w":

@@ -288,11 +288,12 @@ class GameMain:
                 return
 
     def eat_drink(self):
-        self.game_now.player.Eq1.sort_items_eat_drink()
+
         finish = 0
         while finish != 1:
+            self.game_now.player.Eq1.sort_items_eat_drink()
             # [[name_of_item, name_of_item, name_of_item],[1, 2, 3]]
-            items_list = (["0"], ["0"])
+            items_list = (["1"], ["0"])
             id = 1
             self.game_now.player.Eq1.display_items_eat_drink()
             for item in self.game_now.player.Eq1.elements:
@@ -312,37 +313,31 @@ class GameMain:
             for i in range(len(items_list[1])):
                 if id_choice == items_list[1][i]:
                     item_name = items_list[0][i]
-            print(items_list)
-            things_to_consume = [
-                "Potato", "Bottle of Water", "Hyaena's meet", "Apple"
-                "HP Potion", "Herb", "Strength Potion", "Agility Potion"
-                ]
-
-            id = 0
+            id = 1
             for item in self.game_now.player.Eq1.elements:
-                print(item.name)
-                if item_name in things_to_consume:
-                    if item_name in things_to_consume[:3]:
-                            hp_start = self.game_now.player.hp
-                            hp = self.game_now.player.hp + item.points
-                            if hp > self.game_now.player.hp_max:
-                                self.game_now.player.hp = self.game_now.player.hp_max
-                            else:
-                                self.game_now.player.hp = hp
-                            hp_gain = self.game_now.player.hp - hp_start
-                            print("You restored", hp_gain, "HP.")
-                    if item_name == things_to_consume[4:5]:
-                            self.game_now.player.hp_max += item.points
+                if item_name == item.name:
+                    a = item.points
+                    self.game_now.player.Eq1.remove_food(item_name)
+                #    if item_name in things_to_consume:
+                    if item_name in ["Potato", "Bottle of Water", "Hyaena's meet", "Apple"]:
+                        hp_start = self.game_now.player.hp
+                        hp = self.game_now.player.hp + a
+                        if hp > self.game_now.player.hp_max:
                             self.game_now.player.hp = self.game_now.player.hp_max
-                            print("Your HP has been increased by", item.points)
-                    if item_name == things_to_consume[6]:
-                            self.game_now.player.strength += item.points
-                            print("Your strength has been increased by", item.points)
-                    if item_name == things_to_consume[7]:
-                            self.game_now.player.agility += item.points
-                            print("Your agility has been increased by", item.points)
-                    self.game_now.player.Eq1.remove_element(id)
-                    id += 1
+                        else:
+                            self.game_now.player.hp = hp
+                        hp_gain = self.game_now.player.hp - hp_start
+                        print("You restored", hp_gain, "HP.")
+                    if item_name in ["HP Potion", "Herb"]:
+                        self.game_now.player.hp_max += a
+                        self.game_now.player.hp = self.game_now.player.hp_max
+                        print("Your HP has been increased by", a)
+                    if item_name in ["Strength Potion"]:
+                        self.game_now.player.strength += a
+                        print("Your strength has been increased by", a)
+                    if item_name == ["Agility Potion"]:
+                        self.game_now.player.agility += a
+                        print("Your agility has been increased by", a)
                     break
 
     def choose_NPC(self, x):
