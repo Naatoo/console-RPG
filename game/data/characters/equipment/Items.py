@@ -16,7 +16,13 @@ class Item:
             "Paw": None,
             "Bone Sword": None,
             "Rat Fur": None,
-            "Wolf Fur": None
+            "Wolf Fur": None,
+            "Hammer": None,
+            "Cobra's poison": None,
+            "Hyaena's meet": 30,
+            "Apple": 100,
+            "Herb": 20
+
             }
         description = {
             "Reed": "A fresh reed.",
@@ -34,12 +40,18 @@ class Item:
             "Paw": 0,
             "Bone Sword": "You can feel it still lives.",
             "Rat Fur": "Very warm.",
-            "Wolf Fur": "Very popular in winter."
+            "Wolf Fur": "Very popular in winter.",
+            "Hammer": "Basic weapon of dwarfs.",
+            "Cobra's poison": "Can be use as an ingredient of many mixtures.",
+            "Hyaena's meet": "Nice-to-eat meat.",
+            "Apple": "A popular fruit.",
+            "Herb": "Increases HP"
             }
         value = {
             "Reed": 1,
             "Golden Key": 25,
-            "Sword": 50, "Axe": 10,
+            "Sword": 50,
+            "Axe": 40,
             "Map": 100,
             "Teeth": 0,
             "Potato": 5, "Bottle of Water": 8,
@@ -50,7 +62,12 @@ class Item:
             "Paw": 0,
             "Bone Sword": 500,
             "Rat Fur": 5,
-            "Wolf Fur": 10
+            "Wolf Fur": 10,
+            "Hammer": 70,
+            "Cobra's poison": 30,
+            "Hyaena's meet": 20,
+            "Apple": 10,
+            "Herb": 20
             }
         damage = {
             "Reed": None,
@@ -68,7 +85,12 @@ class Item:
             "Paw": 5,
             "Bone Sword": 30,
             "Rat Fur": None,
-            "Wolf Fur": None
+            "Wolf Fur": None,
+            "Hammer": 15,
+            "Cobra's poison": None,
+            "Hyaena's meet": None,
+            "Apple": None,
+            "Herb": None
             }
         attack_speed = {
             "Reed": None,
@@ -86,7 +108,12 @@ class Item:
             "Paw": 7,
             "Bone Sword": 8,
             "Rat Fur": None,
-            "Wolf Fur": None
+            "Wolf Fur": None,
+            "Hammer": 4,
+            "Cobra's poison": None,
+            "Hyaena's meet": None,
+            "Apple": None,
+            "Herb": None
             }
         is_weapon = {
             "Reed": 0,
@@ -104,7 +131,12 @@ class Item:
             "Paw": 1,
             "Bone Sword": 1,
             "Rat Fur": 0,
-            "Wolf Fur": 0
+            "Wolf Fur": 0,
+            "Hammer": 1,
+            "Cobra's poison": 0,
+            "Hyaena's meet": 0,
+            "Apple": 0,
+            "Herb": 0
             }
         self.name = name
         self.value = value[name]

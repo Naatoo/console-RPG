@@ -104,27 +104,3 @@ class GenerateNPC:
         NPC_choice_temp = choice(self.NPC_in_village)
         self.NPC.append(NPC_choice_temp)
         self.NPC_in_village.remove(NPC_choice_temp)
-
-
-class GenerateWolf:
-    def __init__(self):
-        self.wolf = []
-
-    def wolf_x(self, free_x):
-        for i in range(17):
-            wolf_x_temp = choice(free_x)
-            self.wolf.append(wolf_x_temp)
-            free_x.remove(wolf_x_temp)
-        return free_x
-
-
-class GeneratePotato:
-    def __init__(self):
-        self.potato = []
-
-    def potato_x(self, free_x):
-        for i in range(20):
-            potato_x_temp = choice(free_x)
-            self.potato.append(potato_x_temp)
-            free_x.remove(potato_x_temp)
-

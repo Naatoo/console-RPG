@@ -5,7 +5,7 @@ from decimal import Decimal
 from game.text.Tutorial import Tutorial
 from game.text.End import GameEnd
 from game.data.Spawn_move_engine import Game
-from game.data.characters.Enemy import Enemy
+
 from game.data.characters.equipment.Items import Item
 
 
@@ -132,7 +132,7 @@ class GameMain:
 
             # Check whether player can open the gate
             if "Golden Key" in self.game_now.player.Eq1.items_names() and x == self.game_now.now_map.camp_gate + 1:
-                self.open_gate()
+                self.open_gate(x)
 
             user_input = GameMain.non_automatic_loop(self, x)
             if user_input == "save":
@@ -312,12 +312,17 @@ class GameMain:
             for i in range(len(items_list[1])):
                 if id_choice == items_list[1][i]:
                     item_name = items_list[0][i]
-            things_to_consume = ["Potato", "Bottle of Water", "HP Potion", "Strength Potion", "Agility Potion"]
+            print(items_list)
+            things_to_consume = [
+                "Potato", "Bottle of Water", "Hyaena's meet", "Apple"
+                "HP Potion", "Herb", "Strength Potion", "Agility Potion"
+                ]
+
             id = 0
             for item in self.game_now.player.Eq1.elements:
-                id += 1
+                print(item.name)
                 if item_name in things_to_consume:
-                    if item_name in things_to_consume[:2]:
+                    if item_name in things_to_consume[:3]:
                             hp_start = self.game_now.player.hp
                             hp = self.game_now.player.hp + item.points
                             if hp > self.game_now.player.hp_max:
@@ -326,17 +331,18 @@ class GameMain:
                                 self.game_now.player.hp = hp
                             hp_gain = self.game_now.player.hp - hp_start
                             print("You restored", hp_gain, "HP.")
-                    if item_name == things_to_consume[2]:
+                    if item_name == things_to_consume[4:5]:
                             self.game_now.player.hp_max += item.points
                             self.game_now.player.hp = self.game_now.player.hp_max
                             print("Your HP has been increased by", item.points)
-                    if item_name == things_to_consume[3]:
+                    if item_name == things_to_consume[6]:
                             self.game_now.player.strength += item.points
                             print("Your strength has been increased by", item.points)
-                    if item_name == things_to_consume[4]:
+                    if item_name == things_to_consume[7]:
                             self.game_now.player.agility += item.points
                             print("Your agility has been increased by", item.points)
                     self.game_now.player.Eq1.remove_element(id)
+                    id += 1
                     break
 
     def choose_NPC(self, x):
@@ -881,6 +887,7 @@ class GameMain:
                     for i in range(len(self.game_now.enemies_spawn.enemies)):
                         if x in self.game_now.enemies_spawn.enemies[i]:
                             self.game_now.enemies_spawn.enemies[i].remove(x)
+                    self.game_now.enemies_map[x] = "a"
                     break
                 player_time_begin = time()
 

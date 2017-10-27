@@ -31,7 +31,10 @@ class MapNew:
             1: ["w", "Wolf"],
             2: ["b", "Bandit"],
             3: ["s", "Skeleton"],
-            4: ["r", "Rat"]
+            4: ["r", "Rat"],
+            5: ["d", "Dwarf"],
+            6: ["c", "Cobra"],
+            7: ["h", "Hyaena"]
             }
 
         map_key_misc = {

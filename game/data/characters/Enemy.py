@@ -11,7 +11,10 @@ class Enemy:
             "Skeleton": [800, 5, 6, 500],
             "Rat": [200, 4, 10, 300],
             "Giant": [2000, 40, 5, 10000],
-            "Wolf": [300, 5, 8, 1000]
+            "Wolf": [300, 5, 8, 1000],
+            "Dwarf": [600, 15, 8, 1000],
+            "Cobra": [250, 5, 20, 1900],
+            "Hyaena": [300, 5, 18, 1000]
             }
         items = {
             "Bandit": ["Sword", "Reed"],
@@ -19,6 +22,9 @@ class Enemy:
             "Rat": ["Teeth", "Rat Fur"],
             "Giant": ["Axe"],
             "Wolf": ["Paw"],
+            "Dwarf": ["Hammer"],
+            "Cobra": ["Teeth"],
+            "Hyaena": ["Teeth"]
            # "Potato": ["Wolf Fur"]
             }
         self.name = name
