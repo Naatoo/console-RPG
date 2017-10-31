@@ -146,6 +146,7 @@ class Game:
                 self.items_map[item_x].append(Item(self.misc_and_indexes[str(1 + i)][1]))
 
     def choose_direction(self, x, direction):
+        index_changer = 0
         if direction == "w":
             index_changer = -10
         if direction == "s":
