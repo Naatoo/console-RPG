@@ -5,12 +5,13 @@ from decimal import Decimal
 from game.text.Tutorial import Tutorial
 from game.text.End import GameEnd
 from game.data.Spawn_move_engine import Game
-
 from game.data.characters.equipment.Items import Item
 
 
 class GameMain:
     def __init__(self):
+
+        # MAIN PARAMETERS
         self.save = 0
         self.load = 0
         self.end = 0
@@ -107,6 +108,7 @@ class GameMain:
                     self.load = 1
                     break
 
+            # Check if main quest is finished
             if len(self.game_now.enemies_spawn.enemies[3]) == 0:
                 GameEnd.ask_if_want_quit()
                 user_choice = 0
@@ -132,9 +134,10 @@ class GameMain:
 
             # Check whether player can open the gate
             if "Golden Key" in self.game_now.player.Eq1.items_names() and x == self.game_now.now_map.camp_gate + 1:
-                self.open_gate(x)
+                self.open_gate()
 
             user_input = GameMain.non_automatic_loop(self, x)
+
             if user_input == "save":
                 self.save = 1
             if user_input == "load":
@@ -223,23 +226,355 @@ class GameMain:
                 self.display_stats()
         return user_input
 
-    def open_gate(self, x):
-        print("1. Open the gate.")
-        print("0. Don't do anything.")
-        final_decision = 0
-        while final_decision not in ["0", "1"]:
-            final_decision = input("Type the number: ")
-        if final_decision == "0":
-            return
-        else:
-            print("-" * 50)
-            print("Golden Key has been removed from your inventory.")
-            print("-" * 50)
-            for i in range(len(self.game_now.player.Eq1.elements)):
-                if self.game_now.player.Eq1.elements[i].name == "Golden Key":
-                    self.game_now.player.Eq1.remove_element(i)
+    # ----------------------------------------------------------
+    # METHODS OF THE GAME
+    # ----------------------------------------------------------
+    # 1. Battle mode
+    # 2. Trade mode
+    # 3. Display mode
+    # 4. Interaction with items
+    # 5. Talk/Quest mode
+    # 6. End Game
+    # ----------------------------------------------------------
+
+    # ----------------------------------------------------------
+    # 1. BATTLE
+    # ----------------------------------------------------------
+
+    def choose_opponent(self, x):
+        for index, enemy_x in enumerate(self.game_now.enemies_spawn.enemies):
+            if x in enemy_x:
+                enemy_name = self.game_now.enemies_and_indexes[str(index)][1]
+        return enemy_name
+
+    def battle(self, x):
+        # Player statistics
+        weapon_index = 0
+        if_fists = 0
+        for index, item in enumerate(self.game_now.player.Eq1.elements):
+            if item.is_weapon == 2:
+                weapon_index = index
+        try:
+            player_dmg = self.game_now.player.strength * self.game_now.player.Eq1.elements[weapon_index].damage
+            player_as = self.game_now.player.agility * self.game_now.player.Eq1.elements[weapon_index].attack_speed
+
+        # IF PLAYER HAS NO WEAPON
+        except TypeError:
+            player_dmg = self.game_now.player.strength * 5
+            player_as = self.game_now.player.agility * 5
+            if_fists = 1
+        player_hp = self.game_now.player.hp
+
+        # Enemy statistics
+        enemy_name = GameMain.choose_opponent(self, x)
+        enemy = self.game_now.enemies_map[x]
+        weapon_index = 0
+        max_dmg = 0
+        for index, item in enumerate(enemy.Equipment.elements):
+            if item.is_weapon == 1 or item.is_weapon == 2:
+                if enemy.Equipment.elements[index].damage > max_dmg:
+                    weapon_index = index
+                    max_dmg = enemy.Equipment.elements[index].damage
+        enemy_dmg = enemy.strength * enemy.Equipment.elements[weapon_index].damage
+        enemy_as = enemy.agility * enemy.Equipment.elements[weapon_index].attack_speed
+        enemy_hp = enemy.hp
+
+        # SET ATTACK SPEED
+        player_as = round((1 / player_as) * 1000)
+        enemy_as = round((1 / enemy_as) * 1000)
+        player_time_begin = time()
+        enemy_time_begin = time()
+        print("+" * 50)
+        print("BATTLE HAS STARTED")
+        print("YOU ARE FIGHTING AGAINST", enemy_name.upper())
+        if if_fists == 1:
+            print("YOU ARE FIGHTING WITH YOR FISTS!")
+        print("+" * 50)
+
+        # BATTLE STARTS
+        while player_hp > 0 and enemy_hp > 0:
+            sleep(0.1)
+            player_time_now = time()
+            enemy_time_now = time()
+            enemy_dmg_now = round(enemy_dmg * randrange(75, 126) / 100)
+            player_dmg_now = round(player_dmg * randrange(75, 126) / 100)
+            player_time_check = int(Decimal(player_time_now - player_time_begin) * 10)
+            enemy_time_check = int(Decimal(enemy_time_now - enemy_time_begin) * 10)
+
+            # print(player_time_check)
+            # print("       ", enemy_time_check)
+
+            # Player's hit
+            if player_time_check == player_as:
+                enemy_hp = enemy_hp - player_dmg_now
+                if enemy_hp > 0:
+                    print("You dealt", player_dmg_now, "damage.", enemy_name, "has", enemy_hp, "left.")
+                else:
+                    self.game_now.player.hp = player_hp
+
+                    # Player killed an enemy
+                    print("You dealt ", player_dmg_now, "damage. ")
+                    print("+" * 50)
+                    print(enemy_name.upper(), "HAS BEEN SLAIN.")
+                    print("+" * 50)
+                    # Drop items on the ground
+                    n = 0
+                    for i in range(len(enemy.Equipment.elements)):
+                        if n == 0:
+                            if enemy.Equipment.elements[i].name in ["Teeth", "Paw"]:
+                                enemy.Equipment.elements.pop(i)
+                                n = 1
+                    for i in range(len(enemy.Equipment.elements)):
+                        self.game_now.items_map[x].append(Item(enemy.Equipment.elements[i].name))
+                    # Delete enemy from this coord
+                    for i in range(len(self.game_now.enemies_spawn.enemies)):
+                        if x in self.game_now.enemies_spawn.enemies[i]:
+                            self.game_now.enemies_spawn.enemies[i].remove(x)
+                    self.game_now.enemies_map[x] = "a"
                     break
-            self.game_now.now_map.map[self.game_now.now_map.camp_gate] = "O"
+                player_time_begin = time()
+
+            # Enemy's hit
+            if enemy_time_check == enemy_as:
+                player_hp = player_hp - enemy_dmg_now
+                if player_hp > 0:
+                    print(enemy_name, "dealt", enemy_dmg_now, "damage. You have", player_hp, "left.")
+                else:
+                    # Player dies
+                    print(enemy_name, " dealt ", enemy_dmg_now, "damage.")
+                    print("+" * 50)
+                    print("You are dead.")
+                    print("+" * 50)
+                    self.dead = 1
+                    break
+                enemy_time_begin = time()
+
+    # ----------------------------------------------------------
+    # 2. TRADE
+    # ----------------------------------------------------------
+
+    def choose_NPC(self, x):
+        for NPC in self.game_now.to_index_NPC:
+            if x == NPC.x:
+                met_NPC = NPC
+        return met_NPC
+
+    def trade(self, x):
+        no_sell = 0
+        trader = self.choose_NPC(x)
+        user_choice = None
+        while user_choice != "0":
+            while user_choice not in ["1", "2", "0"]:
+                if no_sell == 0:
+                    self.display_eq_trade_player()
+                    self.display_eq_trade_trader(trader)
+                    no_sell = 0
+                print("Do you want to buy or sell something?")
+                print("1. Buy.")
+                print("2. Sell")
+                print("0. End trading")
+                user_choice = input("Type the number: ")
+                print("")
+                end = None
+                if user_choice == "1":
+                    while end != "0":
+                        self.display_eq_trade_trader(trader)
+                        end = self.buying_mode(trader)
+                if user_choice == "2":
+                    if trader.name in ["Merchant"]:
+                        while end != "0":
+                            self.display_eq_trade_player()
+                            end = self.selling_mode(trader)
+                    else:
+                        print(trader.name, "does not buy anything.")
+                        no_sell = 1
+                if user_choice == "0":
+                    break
+            if user_choice != "0":
+                user_choice = None
+
+    def buying_mode(self, trader):
+        end_buy = 0
+        while end_buy != 1:
+            self.display_eq_trade_trader(trader)
+            # [[name_of_item, name_of_item, name_of_item],[1, 2, 3]]
+            items_list = (["0"], ["0"])
+            id = 1
+            for item in trader.Equipment.elements:
+                items_list[0].append(item.name)
+                items_list[1].append(str(id))
+                id += 1
+            id_choice = 0
+            while id_choice not in items_list[1]:
+                id_choice = input("What do you want to buy? Type the number: (type 0 to go back)")
+            if id_choice == "0":
+                return id_choice
+            # change chosen id into item's name
+            for i in range(len(items_list[1])):
+                if id_choice == items_list[1][i]:
+                    name = items_list[0][i]
+            if name == "Golden Key":
+                print(trader.name, "does not sell this item.")
+                end_buy = 1
+            for index, item in enumerate(trader.Equipment.elements):
+                if name == item.name:
+                    if self.game_now.player.Eq1.gold >= item.value:
+                        print("")
+                        print("-" * 80)
+                        print("+" * 80)
+                        print("You bought", name, "for", item.value, "gold.")
+                        print("+" * 80)
+                        print("-" * 80)
+                        self.game_now.player.Eq1.gold -= item.value
+                        trader.Equipment.gold += item.value
+                        self.game_now.player.Eq1.add_element(name)
+                        trader.Equipment.remove_element(index)
+                        break
+                    else:
+                        print("You do not have enough gold.")
+                        name = 1
+                if index == len(trader.Equipment.elements):
+                    print(trader.name, "do not sell this item")
+
+    def selling_mode(self, trader):
+        end_sell = 0
+        while end_sell != 1:
+            self.display_eq_trade_player()
+            # [[name_of_item, name_of_item, name_of_item],[1, 2, 3]]
+            items_list = (["0"], ["0"])
+            id = 1
+            for item in self.game_now.player.Eq1.elements:
+                items_list[0].append(item.name)
+                items_list[1].append(str(id))
+                id += 1
+            id_choice = 0
+            while id_choice not in items_list[1]:
+                id_choice = input("What do you want to sell? Type the number: (type 0 to go back)")
+            if id_choice == "0":
+                return id_choice
+            # change chosen id into item's name
+            for i in range(len(items_list[1])):
+                if id_choice == items_list[1][i]:
+                    name = items_list[0][i]
+            if name == "Golden Key":
+                print("You cannot sell this item.")
+                continue
+            for index, item in enumerate(self.game_now.player.Eq1.elements):
+                if name == item.name:
+                    if trader.Equipment.gold >= item.value:
+                        print("")
+                        print("-" * 50)
+                        print("You sold", name, "for", item.value, "gold.")
+                        print("-" * 50)
+                        self.game_now.player.Eq1.gold += item.value
+                        trader.Equipment.gold -= self.game_now.player.Eq1.elements[index].value
+                        trader.Equipment.add_element(name)
+                        self.game_now.player.Eq1.remove_element(index)
+                        self.set_weapon_default()
+                        # WEAPONS FIRST IN EQ
+                        break
+                    else:
+                        print(trader.name, " do not have enough gold.")
+                if index == len(self.game_now.player.Eq1.elements):
+                    print("You do not have this item.")
+
+    # ----------------------------------------------------------
+    # 3. DISPLAY
+    # ----------------------------------------------------------
+
+    def collect_items(self, x):
+        quantity = len(self.game_now.items_map[x])
+        if quantity == 1:
+            self.game_now.player.Eq1.add_element(self.game_now.items_map[x][0].name)
+            print(self.game_now.items_map[x][0].name, end=" ")
+            self.game_now.items_map[x].remove(self.game_now.items_map[x][0])
+            print("has been added to your inventory.")
+        else:
+            while True:
+                for i in range(quantity):
+                    self.game_now.player.Eq1.add_element(self.game_now.items_map[x][i].name)
+                print("Items have been added to your inventory")
+                try:
+                    n = 0
+                    for i in range(quantity):
+                        self.game_now.items_map[x].remove(self.game_now.items_map[x][i - n])
+                        n += 1
+                except IndexError:
+                    pass
+                break
+
+    def show_map(self):
+        if "Map" in self.game_now.player.Eq1.items_names():
+            self.game_now.now_map.print_map(if_got_map=1)
+        else:
+            self.game_now.now_map.print_map(if_got_map=0)
+
+    def display_eq_trade_trader(self, trader):
+        print("*" * 50)
+        print("EQUIPMENT OF", trader.name.upper(), "             ",
+              "GOLD:", trader.Equipment.gold)
+        print("*" * 50)
+        trader.Equipment.display_eq()
+        print("Your gold:", self.game_now.player.Eq1.gold)
+        print("")
+
+    def display_eq_trade_player(self):
+        print("*" * 50)
+        print("YOUR EQUIPMENT", "                       ", "GOLD:", self.game_now.player.Eq1.gold)
+        print("*" * 50)
+        self.game_now.player.Eq1.display_eq()
+        print("")
+
+    def display_NPC_you_met(self, x):
+        for NPC in self.game_now.to_index_NPC:
+            if x == NPC.x:
+                print("There is", NPC.name, "here. You can talk with him.")
+                return
+
+    def display_stats(self):
+        print("-" * 50)
+        print("Health points: ", self.game_now.player.hp, "/", self.game_now.player.hp_max)
+        print("Strength: ", self.game_now.player.strength)
+        print("Agility: ", self.game_now.player.agility)
+        print("-" * 50)
+
+    def display_items_on_the_ground(self, x):
+        print("-" * 50)
+        print("You can see", end=" ")
+        for i in range(len(self.game_now.items_map[x])):
+            if i + 1 == len(self.game_now.items_map[x]):
+                print(self.game_now.items_map[x][i].name, end=" ")
+            else:
+                print(self.game_now.items_map[x][i].name, end=", ")
+        print("on the ground.")
+        print("-" * 50)
+
+    @staticmethod
+    def help():
+        help = [
+            "",
+            "Keyboard options:",
+            "0 - Main Menu",
+            "w - go north",
+            "s - go south",
+            "a - go west",
+            "d - go east",
+            "b - display player's stats",
+            "c - collect items from the ground",
+            "e - eat or drink",
+            "i - display your equipment",
+            "m - display map",
+            "n - talk with NPC",
+            "q - change weapon",
+            "t - trade with NPC",
+            ""
+        ]
+        for line in help:
+            print(line)
+
+    # ----------------------------------------------------------
+    # 4. INTERACTION WITH ITEMS
+    # ----------------------------------------------------------
 
     def set_weapon_default(self):
         n = 0
@@ -288,7 +623,6 @@ class GameMain:
                 return
 
     def eat_drink(self):
-
         finish = 0
         while finish != 1:
             self.game_now.player.Eq1.sort_items_eat_drink()
@@ -313,7 +647,6 @@ class GameMain:
             for i in range(len(items_list[1])):
                 if id_choice == items_list[1][i]:
                     item_name = items_list[0][i]
-            id = 1
             for item in self.game_now.player.Eq1.elements:
                 if item_name == item.name:
                     a = item.points
@@ -340,11 +673,9 @@ class GameMain:
                         print("Your agility has been increased by", a)
                     break
 
-    def choose_NPC(self, x):
-        for NPC in self.game_now.to_index_NPC:
-            if x == NPC.x:
-                met_NPC = NPC
-        return met_NPC
+    # ----------------------------------------------------------
+    # 5. TALK/QUEST MODE
+    # ----------------------------------------------------------
 
     def talk(self, x):
         NPC = self.choose_NPC(x)
@@ -434,9 +765,9 @@ class GameMain:
     def quest_monk(self):
         if "Bone Sword" in self.game_now.player.Eq1.items_names() and self.game_now.monk.quest == 0:
             self.game_now.monk.quest = 1
-            for i in range(len(self.game_now.player.Eq1.elements)):
-                if self.game_now.player.Eq1.elements[i].name == "Bone Sword":
-                    self.game_now.player.Eq1.remove_element(i)
+            for index, item in enumerate(self.game_now.player.Eq1.elements):
+                if item.name == "Bone Sword":
+                    self.game_now.player.Eq1.remove_element(index)
                     self.set_weapon_default()
                     break
             self.meet_mals["Monk"][0] = 2
@@ -447,32 +778,6 @@ class GameMain:
             print("-" * 50)
             print("Golden key has been been added to your inventory.")
             print("-" * 50)
-
-    def talk_merchant(self, NPC):
-        i = 1
-        print("")
-        print(">" * 30)
-        while self.game_now.merchant_city.dialogues[i] != 1:
-            print(NPC.name, end="")
-            print(": ", end="")
-            sleep(0.8)
-            print(self.game_now.merchant_city.dialogues[i])
-            i += 1
-        sleep(0.8)
-        print("<" * 30)
-
-    def talk_cartographer(self, NPC):
-        i = 1
-        print("")
-        print(">" * 30)
-        while self.game_now.cartographer.dialogues[i] != 1:
-            print(NPC.name, end="")
-            print(": ", end="")
-            sleep(0.8)
-            print(self.game_now.cartographer.dialogues[i])
-            i += 1
-        sleep(0.8)
-        print("<" * 30)
 
     def talk_guard(self, i, good, NPC):
         while good != 1:
@@ -521,8 +826,8 @@ class GameMain:
 
     def quest_alchemist(self):
         k = 0
-        for i in range(len(self.game_now.player.Eq1.elements)):
-            if self.game_now.player.Eq1.elements[i].name == "Reed":
+        for item in self.game_now.player.Eq1.elements:
+            if item.name == "Reed":
                 k += 1
         if k > 4 and self.game_now.alchemist.quest == 0:
             reed = 0
@@ -539,6 +844,32 @@ class GameMain:
             print("-" * 50)
             print("HP Potion has been added to your inventory.")
             print("-" * 50)
+
+    def talk_merchant(self, NPC):
+        i = 1
+        print("")
+        print(">" * 30)
+        while self.game_now.merchant_city.dialogues[i] != 1:
+            print(NPC.name, end="")
+            print(": ", end="")
+            sleep(0.8)
+            print(self.game_now.merchant_city.dialogues[i])
+            i += 1
+        sleep(0.8)
+        print("<" * 30)
+
+    def talk_cartographer(self, NPC):
+        i = 1
+        print("")
+        print(">" * 30)
+        while self.game_now.cartographer.dialogues[i] != 1:
+            print(NPC.name, end="")
+            print(": ", end="")
+            sleep(0.8)
+            print(self.game_now.cartographer.dialogues[i])
+            i += 1
+        sleep(0.8)
+        print("<" * 30)
 
     def talk_blacksmith(self, NPC):
         i = 1
@@ -593,313 +924,27 @@ class GameMain:
             print("Health points: ", self.game_now.player.hp, "/", self.game_now.player.hp_max)
             print("-" * 50)
 
-    def show_map(self):
-        if "Map" in self.game_now.player.Eq1.items_names():
-            self.game_now.now_map.print_map(if_got_map=1)
+    # ----------------------------------------------------------
+    # 6. ENDGAME
+    # ----------------------------------------------------------
+
+    def open_gate(self):
+        print("1. Open the gate.")
+        print("0. Don't do anything.")
+        final_decision = 0
+        while final_decision not in ["0", "1"]:
+            final_decision = input("Type the number: ")
+        if final_decision == "0":
+            return
         else:
-            self.game_now.now_map.print_map(if_got_map=0)
-
-    def display_eq_trade_trader(self, trader):
-        print("*" * 50)
-        print("EQUIPMENT OF", trader.name.upper(), "             ",
-              "GOLD:", trader.Equipment.gold)
-        print("*" * 50)
-        trader.Equipment.display_eq()
-        print("Your gold:", self.game_now.player.Eq1.gold)
-        print("")
-
-    def display_eq_trade_player(self):
-        print("*" * 50)
-        print("YOUR EQUIPMENT", "                       ", "GOLD:", self.game_now.player.Eq1.gold)
-        print("*" * 50)
-        self.game_now.player.Eq1.display_eq()
-        print("")
-
-    def trade(self, x):
-        no_sell = 0
-        trader = self.choose_NPC(x)
-        user_choice = None
-        while user_choice != "0":
-            while user_choice not in ["1", "2", "0"]:
-                if no_sell == 0:
-                    self.display_eq_trade_player()
-                    self.display_eq_trade_trader(trader)
-                    no_sell = 0
-                print("Do you want to buy or sell something?")
-                print("1. Buy.")
-                print("2. Sell")
-                print("0. End trading")
-                user_choice = input("Type the number: ")
-                print("")
-                end = None
-                if user_choice == "1":
-                    while end != "0":
-                        self.display_eq_trade_trader(trader)
-                        end = self.buying_mode(trader)
-                if user_choice == "2":
-                    if trader.name in ["Merchant"]:
-                        while end != "0":
-                            self.display_eq_trade_player()
-                            end = self.selling_mode(trader)
-                    else:
-                        print(trader.name, "does not buy anything.")
-                        no_sell = 1
-                if user_choice == "0":
+            print("-" * 50)
+            print("Golden Key has been removed from your inventory.")
+            print("-" * 50)
+            for index, item in enumerate(self.game_now.player.Eq1.elements):
+                if item.name == "Golden Key":
+                    self.game_now.player.Eq1.remove_element(index)
                     break
-            if user_choice != "0":
-                user_choice = None
-
-    def buying_mode(self, trader):
-        end_buy = 0
-        while end_buy != 1:
-            self.display_eq_trade_trader(trader)
-            # [[name_of_item, name_of_item, name_of_item],[1, 2, 3]]
-            items_list = (["0"], ["0"])
-            id = 1
-            for item in trader.Equipment.elements:
-                items_list[0].append(item.name)
-                items_list[1].append(str(id))
-                id += 1
-            id_choice = 0
-            while id_choice not in items_list[1]:
-                id_choice = input("What do you want to buy? Type the number: (type 0 to go back)")
-            if id_choice == "0":
-                return id_choice
-            # change chosen id into item's name
-            for i in range(len(items_list[1])):
-                if id_choice == items_list[1][i]:
-                    name = items_list[0][i]
-            if name == "Golden Key":
-                print(trader.name, "does not sell this item.")
-                end_buy = 1
-            for i in range(len(trader.Equipment.elements)):
-                if name == trader.Equipment.elements[i].name:
-                    if self.game_now.player.Eq1.gold >= trader.Equipment.elements[i].value:
-                        print("")
-                        print("-" * 80)
-                        print("+" * 80)
-                        print("You bought", name, "for", trader.Equipment.elements[i].value, "gold.")
-                        print("+" * 80)
-                        print("-" * 80)
-                        self.game_now.player.Eq1.gold -= trader.Equipment.elements[i].value
-                        trader.Equipment.gold += trader.Equipment.elements[i].value
-                        self.game_now.player.Eq1.add_element(name)
-                        trader.Equipment.remove_element(i)
-                        break
-                    else:
-                        print("You do not have enough gold.")
-                        name = 1
-                if i == len(trader.Equipment.elements):
-                    print(trader.name, "do not sell this item")
-
-    def selling_mode(self, trader):
-        end_sell = 0
-        while end_sell != 1:
-            self.display_eq_trade_player()
-            # [[name_of_item, name_of_item, name_of_item],[1, 2, 3]]
-            items_list = (["0"], ["0"])
-            id = 1
-            for item in self.game_now.player.Eq1.elements:
-                items_list[0].append(item.name)
-                items_list[1].append(str(id))
-                id += 1
-            id_choice = 0
-            print(items_list)
-            while id_choice not in items_list[1]:
-                id_choice = input("What do you want to sell? Type the number: (type 0 to go back)")
-            if id_choice == "0":
-                return id_choice
-            # change chosen id into item's name
-            for i in range(len(items_list[1])):
-                if id_choice == items_list[1][i]:
-                    name = items_list[0][i]
-            if name == "Golden Key":
-                print("You cannot sell this item.")
-                continue
-            for i in range(len(self.game_now.player.Eq1.elements)):
-                if name == self.game_now.player.Eq1.elements[i].name:
-                    if trader.Equipment.gold >= self.game_now.player.Eq1.elements[i].value:
-                        print("")
-                        print("-" * 50)
-                        print("You sold", name, "for", self.game_now.player.Eq1.elements[i].value, "gold.")
-                        print("-" * 50)
-                        self.game_now.player.Eq1.gold += self.game_now.player.Eq1.elements[i].value
-                        trader.Equipment.gold -= self.game_now.player.Eq1.elements[i].value
-                        trader.Equipment.add_element(name)
-                        self.game_now.player.Eq1.remove_element(i)
-                        self.set_weapon_default()
-                        # WEAPONS FIRST IN EQ
-                        break
-                    else:
-                        print(trader.name, " do not have enough gold.")
-                if i == len(self.game_now.player.Eq1.elements):
-                    print("You do not have this item.")
-
-    def display_NPC_you_met(self, x):
-        for NPC in self.game_now.to_index_NPC:
-            if x == NPC.x:
-                print("There is", NPC.name, "here. You can talk with him.")
-                return
-
-    def help(self):
-        print("")
-        print("Keyboard options:")
-        print("0 - Main Menu")
-        print("w - go north")
-        print("s - go south")
-        print("a - go west")
-        print("d - go east")
-        print("b - display player's stats")
-        print("c - collect items from the ground")
-        print("e - eat or drink")
-        print("i - display your equipment")
-        print("m - display map")
-        print("n - talk with NPC")
-        print("q - change weapon")
-        print("t - trade with NPC")
-        print("")
-
-    def display_items_on_the_ground(self, x):
-        print("-" * 50)
-        print("You can see", end=" ")
-        for i in range(len(self.game_now.items_map[x])):
-            if i + 1 == len(self.game_now.items_map[x]):
-                print(self.game_now.items_map[x][i].name, end=" ")
-            else:
-                print(self.game_now.items_map[x][i].name, end=", ")
-        print("on the ground.")
-        print("-" * 50)
-
-    def collect_items(self, x):
-        quantity = len(self.game_now.items_map[x])
-        if quantity == 1:
-            self.game_now.player.Eq1.add_element(self.game_now.items_map[x][0].name)
-            print(self.game_now.items_map[x][0].name, end=" ")
-            self.game_now.items_map[x].remove(self.game_now.items_map[x][0])
-            print("has been added to your inventory.")
-        else:
-            while True:
-                for i in range(quantity):
-                    self.game_now.player.Eq1.add_element(self.game_now.items_map[x][i].name)
-                print("Items have been added to your inventory")
-                try:
-                    n = 0
-                    for i in range(quantity):
-                        self.game_now.items_map[x].remove(self.game_now.items_map[x][i - n])
-                        n += 1
-                except IndexError:
-                    pass
-                break
-
-    def display_stats(self):
-        print("-" * 50)
-        print("Health points: ", self.game_now.player.hp, "/", self.game_now.player.hp_max)
-        print("Strength: ", self.game_now.player.strength)
-        print("Agility: ", self.game_now.player.agility)
-        print("-" * 50)
-
-    def choose_opponent(self, x):
-        for i in range(len(self.game_now.enemies_spawn.enemies)):
-            if x in self.game_now.enemies_spawn.enemies[i]:
-                enemy_name = self.game_now.enemies_and_indexes[str(i)][1]
-        return enemy_name
-
-    def battle(self, x):
-        # Player statistics
-        weapon_index = 0
-        if_fists = 0
-        for i in range(len(self.game_now.player.Eq1.elements)):
-            if self.game_now.player.Eq1.elements[i].is_weapon == 2:
-                weapon_index = i
-        try:
-            player_dmg = self.game_now.player.strength * self.game_now.player.Eq1.elements[weapon_index].damage
-            player_as = self.game_now.player.agility * self.game_now.player.Eq1.elements[weapon_index].attack_speed
-        # IF PLAYER HAS NO WEAPON
-        except TypeError:
-            player_dmg = self.game_now.player.strength * 5
-            player_as = self.game_now.player.agility * 5
-            if_fists = 1
-        player_hp = self.game_now.player.hp
-
-        # Enemy statistics
-        enemy_name = GameMain.choose_opponent(self, x)
-        enemy = self.game_now.enemies_map[x]
-        weapon_index = 0
-        max_dmg = 0
-        for i in range(len(enemy.Equipment.elements)):
-            if enemy.Equipment.elements[i].is_weapon == 1 or enemy.Equipment.elements[i].is_weapon == 2:
-                if enemy.Equipment.elements[i].damage > max_dmg:
-                    weapon_index = i
-                    max_dmg = enemy.Equipment.elements[i].damage
-        enemy_dmg = enemy.strength * enemy.Equipment.elements[weapon_index].damage
-        enemy_as = enemy.agility * enemy.Equipment.elements[weapon_index].attack_speed
-        enemy_hp = enemy.hp
-
-        player_as = round((1 / player_as) * 1000)
-        enemy_as = round((1 / enemy_as) * 1000)
-        player_time_begin = time()
-        enemy_time_begin = time()
-        print("+" * 50)
-        print("BATTLE HAS STARTED")
-        print("YOU ARE FIGHTING AGAINST", enemy_name.upper())
-        if if_fists == 1:
-            print("YOU ARE FIGHTING WITH YOR FISTS!")
-        print("+" * 50)
-        while player_hp > 0 and enemy_hp > 0:
-            sleep(0.1)
-            player_time_now = time()
-            enemy_time_now = time()
-            enemy_dmg_now = round(enemy_dmg * randrange(75, 126) / 100)
-            player_dmg_now = round(player_dmg * randrange(75, 126) / 100)
-            player_time_check = int(Decimal(player_time_now - player_time_begin) * 10)
-            enemy_time_check = int(Decimal(enemy_time_now - enemy_time_begin) * 10)
-
-            # print(player_time_check)
-            # print("       ", enemy_time_check)
-
-            # Player's hit
-            if player_time_check == player_as:
-                enemy_hp = enemy_hp - player_dmg_now
-                if enemy_hp > 0:
-                    print("You dealt", player_dmg_now, "damage.", enemy_name, "has", enemy_hp, "left.")
-                else:
-                    self.game_now.player.hp = player_hp
-                    # Player killed an enemy
-                    print("You dealt ", player_dmg_now, "damage. ")
-                    print("+" * 50)
-                    print(enemy_name.upper(), "HAS BEEN SLAIN.")
-                    print("+" * 50)
-                    # Drop items on the ground
-                    n = 0
-                    for i in range(len(enemy.Equipment.elements)):
-                        if n == 0:
-                            if enemy.Equipment.elements[i].name in ["Teeth", "Paw"]:
-                                enemy.Equipment.elements.pop(i)
-                                n = 1
-                    for i in range(len(enemy.Equipment.elements)):
-                        self.game_now.items_map[x].append(Item(enemy.Equipment.elements[i].name))
-                    # Delete enemy from this coord
-                    for i in range(len(self.game_now.enemies_spawn.enemies)):
-                        if x in self.game_now.enemies_spawn.enemies[i]:
-                            self.game_now.enemies_spawn.enemies[i].remove(x)
-                    self.game_now.enemies_map[x] = "a"
-                    break
-                player_time_begin = time()
-
-            # Enemy's hit
-            if enemy_time_check == enemy_as:
-                player_hp = player_hp - enemy_dmg_now
-                if player_hp > 0:
-                    print(enemy_name, "dealt", enemy_dmg_now, "damage. You have", player_hp, "left.")
-                else:
-                    # Player dies
-                    print(enemy_name, " dealt ", enemy_dmg_now, "damage.")
-                    print("+" * 50)
-                    print("You are dead.")
-                    print("+" * 50)
-                    self.dead = 1
-                    break
-                enemy_time_begin = time()
+            self.game_now.now_map.map[self.game_now.now_map.camp_gate] = "O"
 
 
 class Checking:

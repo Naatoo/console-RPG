@@ -20,7 +20,7 @@
 ---done23. Display multiple items on the ground
 ---done24. inn ->add minimum gold player need to have
 ---done25. monk -> when takes sword -> it can be deafualt -> make other deafult automatically
-26. end-game function
+---done26. end-game function
 ---done27. sell/buy by index not name
 ---done28. eat/drink via index
 ---done29. spawn wolf in Moving_Engine_Spawn
