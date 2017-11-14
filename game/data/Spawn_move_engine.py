@@ -7,6 +7,7 @@ from game.data.characters.equipment.Items import Item
 
 from random import choice
 
+
 class Game:
     def __init__(self):
         # ----------------------------------------
@@ -68,7 +69,6 @@ class Game:
             "3": ["O", "Giant"], "4": ["w", "Wolf"], "5": ["d", "Dwarf"],
             "6": ["c", "Cobra"], "7": ["h", "Hyaena"]
             }
-
 
         self.enemies_map = []
         [self.enemies_map.append("a") for i in range(100)]

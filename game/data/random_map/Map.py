@@ -19,11 +19,14 @@ class MapNew:
         n = 0
         i = 0
         map_key_terrain = {
-            0: ["Impossi", "ble to move:"],
+            0: ["Terr", "ain:"],
             1: ["^", "Mountains"],
             2: ["=", "River"],
             3: ["/", "Sea"],
-            4: ["~", "Camp's wall"]
+            4: ["~", "Camp's wall"],
+            5: ["#", "City or Village"],
+            6: ["O", "Free place"],
+            7: ["x", "Your position"]
             }
 
         map_key_enemies = {
@@ -37,11 +40,6 @@ class MapNew:
             7: ["h", "Hyaena"]
             }
 
-        map_key_misc = {
-            6: ["x", "Your position"],
-            7: ["O", "Free place"],
-            8: ["#", "City or Village"]
-            }
         for p in self.map:
             # check if player bought map
             if p in ["s", "r"]:
@@ -56,19 +54,16 @@ class MapNew:
                 print("  ", end="")
                 if i == 0:
                     print(map_key_terrain[i][0], end="")
-                    print(map_key_terrain[i][1], end="   ")
+                    print(map_key_terrain[i][1], end=" " * 14)
                     print(map_key_enemies[i][0], end="")
                     print(map_key_enemies[i][1])
-                if i in range(1, 5):
+                if i in range(1, 8):
                     print(map_key_terrain[i][0], end=" - ")
                     print(map_key_terrain[i][1], end=(" " * (22 - (len(map_key_terrain[i][1]) + 4))))
                     print(map_key_enemies[i][0], end=" - ")
                     print(map_key_enemies[i][1])
-                if i == 5:
+                if i == 8:
                     print("")
-                if i in range(6, 9):
-                    print(map_key_misc[i][0], end=" - ")
-                    print(map_key_misc[i][1],)
                 i += 1
                 n = 0
         print("")
