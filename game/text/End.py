@@ -7,6 +7,7 @@ class GameEnd:
         text = [
             "-" * 50,
             "You did it! Do you want to finish game?",
+            "Would you like to continue this game?",
             "Type 'end' to finish game or type '0' to continue playing in this world",
             "-" * 50,
         ]
@@ -17,6 +18,9 @@ class GameEnd:
         text = [
             "-" * 50,
             "Thank you for playing.",
+            "Remember, the next time map will be different",
+            "So feel free to try it again",
+            "I am looking forward to your feedback",
             "Natoo 2017",
             "-" * 50,
         ]
