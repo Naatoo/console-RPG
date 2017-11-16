@@ -25,3 +25,4 @@
 ---done28. eat/drink via index
 ---done29. spawn wolf in Moving_Engine_Spawn
 30. new quest/talk system
+31. journal/quests info system

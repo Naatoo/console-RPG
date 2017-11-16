@@ -937,6 +937,12 @@ class GameMain:
         if final_decision == "0":
             return
         else:
+            print("Are you sure you want to do this?")
+            dec = 0
+            while dec not in ("yes", "no"):
+                dec = input("Type 'yes' or 'no'")
+            if dec == "no":
+                return
             print("-" * 50)
             print("Golden Key has been removed from your inventory.")
             print("-" * 50)
@@ -944,6 +950,11 @@ class GameMain:
                 if item.name == "Golden Key":
                     self.game_now.player.Eq1.remove_element(index)
                     break
+            [print("#" * i) for i in range(10)]
+            print("Gate has been opened!")
+            [print("#" * i) for i in range(10, 0, -1)]
+            print("")
+            print("Remember to be prepared enough if you want to fight with giant.")
             self.game_now.now_map.map[self.game_now.now_map.camp_gate] = "O"
 
 
