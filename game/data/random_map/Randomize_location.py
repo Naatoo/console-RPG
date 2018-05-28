@@ -2,53 +2,33 @@ from random import choice
 
 
 class GenerateEnemies:
-    def __init__(self, river_location, mountain_location,
-                 city_location, village_location, sea_location, camp_location):
-        self.enemies = []
-        self.enemies.append(GenerateEnemies.bandit(mountain_location))
-        self.enemies.append(GenerateEnemies.skeleton(sea_location))
-        self.enemies.append((GenerateEnemies.rat(city_location, village_location)))
-        self.enemies.append((GenerateEnemies.giant(camp_location)))
+    def __init__(self, mountain_location, city_location, village_location, sea_location, camp_location):
+        self.enemies = [self.bandit(mountain_location=mountain_location),
+                        self.skeleton(sea_location=sea_location),
+                        self.rat(city_location=city_location, village_location=village_location),
+                        self.giant(camp_location=camp_location)]
 
     @staticmethod
     def bandit(mountain_location):
-        bandit_location = []
-        sign = 1
-        if mountain_location == 9:
-            sign = -1
-        bandit_location.append((mountain_location + 1 * sign) * 10 + 6)
-        for i in range(2):
-            bandit_location.append((mountain_location + 2 * sign) * 10 + 7 + i)
-        return bandit_location
+        sign = -1 if mountain_location == 9 else 1
+        return [(mountain_location + 1 * sign) * 10 + 6,
+                *[(mountain_location + 2 * sign) * 10 + 7 + i for i in range(2)]]
 
     @staticmethod
     def skeleton(sea_location):
-        skeleton_location = []
-        sign = 1
-        if sea_location[1] == 9:
-            sign = -1
-        skeleton_location.append(sea_location[1] * 10 + 3)
-        for i in range(2):
-            skeleton_location.append((sea_location[1] + 1 * sign) * 10 + 2 + i)
-        return skeleton_location
+        sign = -1 if sea_location[1] == 9 else 1
+        return [sea_location[1] * 10 + 3,
+                *[((sea_location[1] + 1 * sign) * 10 + 2 + i) for i in range(2)]]
 
     @staticmethod
     def rat(city_location, village_location):
-        rat_location = []
-        sign = 1
-        for i in range(3):
-            rat_location.append((city_location + i) * 10 + 7)
-        if village_location in [3, 4]:
-            sign = -1
-        for i in range(3):
-            rat_location.append((village_location + sign) * 10 + i)
-        return rat_location
+        sign = -1 if village_location in [3, 4] else 1
+        return [*[(city_location + i) * 10 + 7 for i in range(3)],
+                *[(village_location + sign) * 10 + i for i in range(3)]]
 
     @staticmethod
     def giant(camp_location):
-        giant_location = []
-        giant_location.append(camp_location * 10)
-        return giant_location
+        return [camp_location * 10]
 
 
 class GenerateItemsGround:

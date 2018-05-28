@@ -60,9 +60,11 @@ class Game:
         # GENERATE ENEMIES
         # ----------------------------------------
         self.enemies_spawn = GenerateEnemies(
-            self.now_map.river_location, self.now_map.mountain_location,
-            self.now_map.city_location, self.now_map.village_location,
-            self.now_map.sea_location, self.now_map.camp_location)
+            mountain_location=self.now_map.mountain_location,
+            city_location=self.now_map.city_location,
+            village_location=self.now_map.village_location,
+            sea_location=self.now_map.sea_location,
+            camp_location=self.now_map.camp_location)
 
         self.enemies_and_indexes = {
             "0": ["b", "Bandit"], "1": ["s", "Skeleton"], "2": ["r", "Rat"],
@@ -127,15 +129,15 @@ class Game:
 
         # ----
         # SPAWN THE REST OF ENEMIES
-        enemies_rest_signs = ["w", "d", "c", "h"]
-        for i in range(4):
-            self.enemies_spawn.enemies.append([])
-            for k in range(7):
-                enemy_x = choice(free_x_for_enemies)
-                self.now_map.map[enemy_x] = enemies_rest_signs[i]
-                self.enemies_map[enemy_x] = Enemy(self.enemies_and_indexes[str(4 + i)][1])
-                self.enemies_spawn.enemies[i + 4].append(enemy_x)
-                free_x_for_enemies.remove(enemy_x)
+        # enemies_rest_signs = ["w", "d", "c", "h"]
+        # for i in range(4):
+        #     self.enemies_spawn.enemies.append([])
+        #     for k in range(7):
+        #         enemy_x = choice(free_x_for_enemies)
+        #         self.now_map.map[enemy_x] = enemies_rest_signs[i]
+        #         self.enemies_map[enemy_x] = Enemy(self.enemies_and_indexes[str(4 + i)][1])
+        #         self.enemies_spawn.enemies[i + 4].append(enemy_x)
+        #         free_x_for_enemies.remove(enemy_x)
 
         # ----------------------------------------
         # GENERATE LIST OF FREE PLACES ON MAP FOR ITEMS
