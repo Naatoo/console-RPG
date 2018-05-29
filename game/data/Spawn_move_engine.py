@@ -94,10 +94,7 @@ class Game:
             "3": ["A", "Apple"], "4": ["H", "Herb"]
             }
 
-        self.items_spawn = GenerateItemsGround(
-                self.now_map.river_location, self.now_map.mountain_location,
-                self.now_map.city_location, self.now_map.village_location,
-                self.now_map.sea_location)
+        self.items_spawn = GenerateItemsGround(river_location=self.now_map.river_location)
 
         # ----
         # SPAWN ITEMS
