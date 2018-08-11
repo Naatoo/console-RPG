@@ -32,25 +32,18 @@ class GenerateEnemies:
 
 
 class GenerateItemsGround:
-    def __init__(self, river_location, mountain_location,
-                 city_location, village_location, sea_location):
-        self.misc = []
-        self.misc.append((self.reed(river_location)))
+    def __init__(self, river_location):
+        self.misc = [self.reed(river_location=river_location)]
 
     @staticmethod
     def reed(river_location):
-        reed_location = []
-        sign = 1
-        if river_location == 5:
-            sign = -1
-        reed_location.append((river_location - 1 * sign) * 10 + 4)
-        reed_location.append(river_location * 10 + 5)
-        n = 0
-        for i in range(2):
-            reed_location.append((river_location + 1 * sign) * 10 + 3 + n)
-            n += 3
-        reed_location.append((river_location + 2 * sign) * 10 + 4)
-        return reed_location
+        sign = -1 if river_location == 5 else 1
+        return [(river_location - 1 * sign) * 10 + 4,
+                river_location * 10 + 5,
+                (river_location + 1 * sign) * 10 + 3,
+                (river_location + 1 * sign) * 10 + 6,
+                (river_location + 2 * sign) * 10 + 4
+                ]
 
 
 class GenerateNPC:
